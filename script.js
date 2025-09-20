@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Set the start date (September 25, 2025)
-  const startDate = new Date(2025, 8, 25); // Month is 0-indexed, so 8 = September
+  const startDate = new Date(2025, 8, 20); // Month is 0-indexed, so 8 = September
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -328,3 +328,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
   }
+
