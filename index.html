@@ -919,10 +919,10 @@ document.addEventListener("DOMContentLoaded", function() {
         debugLog(`📊 User choice result: ${result.outcome}`);
         if (result.outcome === 'accepted') {
           debugLog("✅ User accepted installation");
-          showPopup("🎉 App installed successfully!");
+          // showPopup("🎉 App installed successfully!");
         } else {
           debugLog("❌ User dismissed installation");
-          showPopup("📱 You can install later from browser menu");
+          // showPopup("📱 You can install later from browser menu");
           installBtn.style.display = "block";
         }
         deferredPrompt = null;
@@ -1015,4 +1015,5 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
 
