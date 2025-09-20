@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saniya's Habit Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#e91e63">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Saniya's Habits">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cpath fill='%23e91e63' d='M96 192c53 0 96-43 96-96S149 0 96 0 0 43 0 96s43 96 96 96z'/%3E%3Cpath fill='%23fff' d='M96 40c-8 0-16 3-21 9-5-6-13-9-21-9-17 0-30 13-30 30 0 35 51 73 51 73s51-38 51-73c0-17-13-30-30-30z'/%3E%3C/svg%3E">
 <style>
 body {
   font-family: 'Poppins', sans-serif;
@@ -421,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("DOM Content Loaded - Starting app initialization");
   
   // Set the start date (September 25, 2025)
-  const startDate = new Date(2025, 8, 21); // Month is 0-indexed
+  const startDate = new Date(2025, 8, 25); // Month is 0-indexed
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -434,35 +439,35 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log('Day Index:', dayIndex);
 
   const habits = [
-    "Drink your banana shake 💧",
+    "Drink 6–8 glasses of water 💧",
     "Smile in the mirror for 1 minute 😊", 
     "Listen to your favorite song 🎶",
     "Write one thing you love about yourself ✍️",
     "Take a 10 min walk/stretch 🚶‍♀️",
-    "Send me a heart emoji ❤️ on whatsApp",
-    "Send me Nudes 💖",
+    "Send me a heart emoji ❤️",
+    "Sleep 15 mins earlier 😴",
     "Eat one healthy fruit 🍎",
     "Compliment yourself loudly 🪞",
     "Do 5 deep breaths 🌬️",
-    "Tarif karo meri 💖",
-    "Gaanaa sunaao 💃",
-    "Think about one happy memory of us and write a message💖",
-    "Send me your selfie 😊",
+    "Read 2 pages of any book 📖",
+    "Dance to your favorite song 💃",
+    "Think about one happy memory of us 💖",
+    "Watch sunset or look at sky 🌇",
     "Write down one dream/goal 🌟",
     "Drink lemon water 🍋",
-    "Write down one thing you want to improve about me 💖",
-    "Share a song that reminds you of us 🎵💑",
+    "Meditate for 5 minutes 🧘‍♀️",
+    "No social media for 30 min 📵",
     "Write one thing you love about me 😏",
-    "Send a voice note saying something cute or funny 🎤😂",
-    "Make a small “memory list” of our happiest moments together 📝💖",
-    "Random “I love you” text days 💌",
+    "Take a cute selfie 😘",
+    "Laugh out loud 😂",
+    "Hug yourself tightly 🤗",
     "Drink warm milk/herbal tea 🥛🍵",
-    "Text me a random “I’m thinking of you” 💌",
-    "Make a best dish for me 😍",
+    "Listen to a calm song 🎧",
+    "Plan your perfect date in your mind 🌌",
     "Close eyes & imagine me 💑",
     "Write one word that describes 'us' 🥰",
-    "Do a funny dance and record a 5-second clip 💃😂",
-    "Send me a message on my sex performance💕",
+    "Sleep early (before 11 pm) 🌙",
+    "Whisper 'I love you' before sleeping 💕",
     "Think about our future together ✨"
   ];
 
@@ -723,27 +728,91 @@ document.addEventListener("DOMContentLoaded", function() {
     reader.readAsDataURL(file);
   });
 
-  // PWA Install
+  // PWA Install - Enhanced for better compatibility
   let deferredPrompt;
+  let isInstallPromptShown = false;
   
+  // Show install button for iOS users
+  function checkiOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }
+  
+  // Show install button for Android/Desktop users
   window.addEventListener('beforeinstallprompt', function(e) {
+    console.log('beforeinstallprompt event fired');
     e.preventDefault();
     deferredPrompt = e;
     installBtn.style.display = "block";
+    isInstallPromptShown = true;
+    
+    // Show popup to inform user
+    setTimeout(() => {
+      showPopup("📱 You can install this app! Click the button below.");
+    }, 2000);
   });
 
+  // For iOS users, show install instructions
+  if (checkiOS() && !isInstallPromptShown) {
+    installBtn.style.display = "block";
+    installBtn.textContent = "Install App (iOS) 📱";
+  }
+
   installBtn.addEventListener('click', function() {
-    installBtn.style.display = "none";
-    if (deferredPrompt) {
+    if (checkiOS()) {
+      // iOS installation instructions
+      showModal("📱 Install on iOS", 
+        "To install this app on iOS:<br><br>" +
+        "1️⃣ Tap the Share button in Safari<br>" +
+        "2️⃣ Scroll down and tap 'Add to Home Screen'<br>" +
+        "3️⃣ Tap 'Add' in the top right<br><br>" +
+        "The app will appear on your home screen! 💖"
+      );
+    } else if (deferredPrompt) {
+      // Android/Desktop installation
+      installBtn.style.display = "none";
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(function(result) {
+        console.log('User choice:', result.outcome);
         if (result.outcome === 'accepted') {
           showPopup("🎉 App installed successfully!");
+        } else {
+          showPopup("📱 You can install later from browser menu");
+          installBtn.style.display = "block";
         }
         deferredPrompt = null;
       });
+    } else {
+      // Fallback for browsers that don't support beforeinstallprompt
+      showModal("📱 Install App", 
+        "To install this app:<br><br>" +
+        "🔹 <strong>Chrome/Edge:</strong> Click menu (⋮) → 'Install app'<br>" +
+        "🔹 <strong>Firefox:</strong> Click menu → 'Install'<br>" +
+        "🔹 <strong>Safari:</strong> Share → 'Add to Home Screen'<br><br>" +
+        "Or bookmark this page for quick access! 💖"
+      );
     }
   });
+
+  // Service Worker Registration with better error handling
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registered successfully:', registration);
+          
+          // Check for updates
+          registration.addEventListener('updatefound', () => {
+            console.log('New service worker available');
+            showPopup("🔄 App updated! Refresh to see changes.");
+          });
+        })
+        .catch(function(error) {
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  } else {
+    console.log('Service Worker not supported');
+  }
 
   // Initialize everything
   console.log("Initializing app...");
