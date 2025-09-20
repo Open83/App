@@ -3,43 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saniya’s Habit Tracker</title>
+<title>Saniya's Habit Tracker</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#ff4081">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#e91e63">
 </head>
 <body>
 <div class="app-container">
-  <h1>💖 Saniya’s 30-Day Habit Tracker</h1>
-
+  <h1>💖 Saniya's 30-Day Habit Tracker</h1>
+  
   <!-- Calendar -->
   <div class="calendar" id="calendar"></div>
-
+  
   <!-- Daily Habit Card -->
   <div class="habit-card" id="habit-card">
-    <h2 id="habit-title">Today’s Habit</h2>
+    <h2 id="habit-title">Today's Habit</h2>
     <p id="habit-desc">Complete your task to unlock a cute message!</p>
     <input type="file" id="photo-input" accept="image/*" style="display:none">
     <button id="mark-done">Mark as Done 📸</button>
   </div>
-
+  
   <!-- Progress Bar -->
-  <div class="progress-bar">
-    <div id="progress"></div>
+  <div class="progress-container">
+    <div class="progress-label">Progress: <span id="progress-text">0/30 days</span></div>
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
   </div>
-
+  
   <!-- Daily Note -->
   <div id="note-box">
-    <p id="note-message">✨ Complete the task to see your message!</p>
+    <p id="note-message">✨ Complete the task to see your special message!</p>
   </div>
-
+  
   <!-- Proof Gallery -->
   <div id="proof-gallery">
     <h3>📸 My Proof Gallery</h3>
     <div id="gallery-photos"></div>
   </div>
-
+  
   <!-- Add to Home Screen Button -->
   <button id="install-btn">Add to Home Screen 📲</button>
 </div>
@@ -48,18 +51,9 @@
 <canvas id="confetti-canvas"></canvas>
 
 <!-- Popups & Modals -->
-<div id="popup" class="popup"></div>
+<div id="popup" class="popup" style="display: none;"></div>
 <div id="modal" class="modal hidden"></div>
 
 <script src="script.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('Service Worker Registered'))
-      .catch(err => console.log('SW registration failed:', err));
-  });
-}
-</script>
 </body>
 </html>
