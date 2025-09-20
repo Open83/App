@@ -1,22 +1,28 @@
 {
   "name": "Saniya's 30-Day Habit Tracker",
   "short_name": "Saniya's Habits",
-  "description": "A romantic 30-day habit tracker for Saniya",
+  "description": "A romantic 30-day habit tracker for Saniya with daily challenges and photo proof",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#fce4ec",
   "theme_color": "#e91e63",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "health", "productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cpath fill='%23e91e63' d='M96 192c53 0 96-43 96-96S149 0 96 0 0 43 0 96s43 96 96 96z'/%3E%3Cpath fill='%23fff' d='M96 40c-8 0-16 3-21 9-5-6-13-9-21-9-17 0-30 13-30 30 0 35 51 73 51 73s51-38 51-73c0-17-13-30-30-30z'/%3E%3C/svg%3E",
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAhFBMVEXpHkf///+xtrj5oIjnAC3pGkPqQ1vwg3H85OX3urD5+fn//v7nADLwfWrzlXjqRF3uaUz6zbv0oZD+8fH1sKT4ysT94t74w7n6z8T4xb30pJX96ur9393xin395eL73tf2tKfxhXT97ev5zL/mADX2uKnveGfsWEP4xrrzm4TtYULqNlQiHjKDAAAFgElEQVR4nO2d2ZaiMBCGE0IShE0BERdQe2m73//9BnCpVtsSCEnw6nf5rx4Pf1VIqipJgq7/6q/+6q+gq2nKaJxlm+12m2VZNp54U3qcjBZNbY5cA6dF2+3j5eFRjlMw+I+2s+I8PG6326xoJhvJd+Csnlz6/Tg7P4oN9HvZJ2wAGxifu8eLm9NkTI6TtnrPjkMhPsZvUF4gFhwrU7Zf/kYwXVxjBhfE7kHzSJmvNd7WpqXcBLGR2S6Yx8aKEUE9Tl4P+VkZr5Hc9LMmW7t1zBpPc5y/nFOhPo7Kg5M6V8h4zVQcmw5VrQy/FejEJXFzrnONnqfqFt12HisD5jkLN+VydZg6VjXCRjI1HqQwaTNEZbGNNKfbcVlF+mVzMd7h8iKJ8jV6nCTdmQ2x4G7JGwDqBEPuZZ/rL8WLIRarKs7FirP7dqJqSqNmMV7oZlCdkHaebJQBcI7qGGPqEevJ5HQXvR2RbpqZjUTtNKE8PdVGnvYQC+z7a9j7gEm6o5A7ebQGJ1KJzm43B5d0n6VBBGIFfNtgTVKaLWgMqvxUkwM2ACaZpjwjfdjOlZGJ9SGTI6t+s5HWYiOrRJxl1n1qIZFjpamLLGjgqFfbQqJpEitIo8bO2bSgKS8wVcEf2kU9IfJAzW+w3vdEVjhg7kHejc7QjdvEBDYggJWhnX6pFc0/qN1a8oHQQBqE4ej8YgGFEL4vUe+QGiGU7aEeYcGD4Wz6rE5kZJfaMHAP1CqCRwkqfXtHGhHHdJbzrBVFRN6wTmcmNFMG8K3aWC8WPEzOLhGhQjnOsZ4qJANs6TmGRPqpjQ8rWa8UrCrBK5LD3B4EYEGjqSYNYDAj5g8Zko6JRoOoI/1o/x29Rws7oEa9J8S/sTMCmF9pvEKjRYyMVxNIwQpI2IeV7Y7gLKNW7w8N4jQ2vROOzQ3YEojV3zCTqRE5LmKBJRqtk7ZfhORqHzK5EgtYzAgsaLJZXk1gAdH7XcGixvCT4n7+eMH8y0SX8V8g4BWAmBaAjQA0dgLghRfJ9EYT7dDApTT4Vqu1/7SfZEm+DlAAIJfQAKQA8sBCYKjJUZCPWIA8YGGg1lmIwPNrLEYTGDBOXh4ALJeaNjJZqJB8YlzZOhZi8qKJkmgTaLKk8hnIU6DAhYK8nZI/ArEP4BnLCE4VLAzL6TiBAOQACQNd0O8EqUuP3J0rAMDHLyQfIBsIRwGAAwB/A4ByxOwDOQzIXbJ6FG1gfLJlwvzHG7kO4DeAbCBeNzjfiALgbwDxEwBfI/YSjDLFhH+kz3sSBFZJ3hfOGsNlOiLgKzj8gC8T8LdkfJQneFhMt8HyDOCVLBDQYC6wgwGx7y/wUSDgCUjKgM/bGfgaiH/hLPCRKPF/+hY5HhX7eYFNguQYWOQBGALFfwVGGDRKc4FzIwQABNjrqTdCgOfpFrwJi3wXiJT2PgRAiKjN4hK/ZktoDxD9t+QJrR1C8B6DaC1yJbQHhPYOEVrPR3L0gHddKPxXTqkgmXNRJL8fO+eDY+RzHvjYJfGGZCGALxoRcGKjdEaBODdOyBV6fhSEEJAFJXyBDMkDN4mOTaLuOwEOg+gQh/sUzDzUCy9JN9lATnz0xJtaAyJ6PZF3wqnWCxCUchE8KN7LdJRFgU8jE4+8dqHOyxQJpJlMXo+8TiPX9w8IbFpIxHUrpPIahRSBTawQ6ITUW6BSUc36p1JfZxmZq3qiOl2oOqE6o3y3T62X5qX7WQRKfyGKfxnSdKvyBZHdnPqr75MKy3Ws0F9yjaTW2tPRPq1LplsLH1n7P8UDRlYKRi/nAAAAAElFTkSuQmCC",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23e91e63' d='M256 512c141 0 256-115 256-256S397 0 256 0 0 115 0 256s115 256 256 256z'/%3E%3Cpath fill='%23fff' d='M256 100c-20 0-40 8-55 23-15-15-35-23-55-23-44 0-80 36-80 80 0 90 135 190 135 190s135-100 135-190c0-44-36-80-80-80z'/%3E%3C/svg%3E",
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAMAAADDpiTIAAAA/1BMVEUAAAD/hjb/hzb/iTf/iDf/hzX/hjb/hjb/hzb/hjb/hjb/hzX/hjb/hjb/hjb/hzb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjX/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjZAjr+NAAAAE3RSTlMAZW/2h8eW5ObQnxvjOJWKBSCMfLXejpcAAAgdSURBVHja7NlpW5swFIDh64xRKhS1tNpitRMXK8W51pda///PmEbcYyUkQIJ2sA4APvkAAAA",
       "sizes": "512x512",
-      "type": "image/svg+xml"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
