@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saniya’s Habit Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="app-container">
+    <h1>💖 Saniya’s 30-Day Habit Tracker</h1>
+
+    <!-- Calendar View -->
+    <div class="calendar" id="calendar"></div>
+
+    <!-- Daily Habit Card -->
+    <div class="habit-card" id="habit-card">
+      <h2 id="habit-title">Today’s Habit</h2>
+      <p id="habit-desc">Complete your task to unlock a cute message!</p>
+      <input type="file" id="photo-input" accept="image/*" style="display:none">
+      <button id="mark-done">Mark as Done 📸</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+
+    <!-- Daily Note -->
+    <div id="note-box">
+      <p id="note-message">✨ Complete the task to see your message!</p>
+    </div>
+
+    <!-- Proof Gallery -->
+    <div id="proof-gallery">
+      <h3>📸 My Proof Gallery</h3>
+      <div id="gallery-photos"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log("Service Worker Registered"));
+    }
+  </script>
+</body>
+</html>
