@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const startDate = new Date(2025, 8, 25); // September = 8 (0-based)
+  const startDate = new Date(2025, 8, 25); // 25 Sep 2025
   const today = new Date();
   const diffTime = today - startDate;
   const dayIndex = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -45,16 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const progress = document.getElementById("progress");
   const galleryPhotos = document.getElementById("gallery-photos");
   const calendar = document.getElementById("calendar");
+  const installBtn = document.getElementById("install-btn");
+  const confettiCanvas = document.getElementById("confetti-canvas");
+  const confettiCtx = confettiCanvas.getContext('2d');
+
+  // Resize confetti canvas
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
 
   // Build calendar
   for (let i = 0; i < 30; i++) {
     const dayDiv = document.createElement("div");
     dayDiv.classList.add("calendar-day");
     dayDiv.textContent = i + 1;
-
     if (i === dayIndex) dayDiv.classList.add("today");
     if (localStorage.getItem("habit-" + i)) dayDiv.classList.add("completed");
-
     calendar.appendChild(dayDiv);
   }
 
@@ -74,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   loadGallery();
 
-  // Load progress
+  // Update progress
   function updateProgress() {
     let completed = 0;
     for (let i = 0; i < 30; i++) {
@@ -84,52 +89,93 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateProgress();
 
+  // Confetti animation
+  function triggerConfetti() {
+    const confetti = [];
+    const colors = ['#ff4081','#ff85b1','#ffe3ec','#ffd1e3'];
+    for(let i=0;i<150;i++){
+      confetti.push({
+        x: Math.random()*window.innerWidth,
+        y: Math.random()*window.innerHeight- window.innerHeight,
+        r: Math.random()*6+2,
+        d: Math.random()*50+10,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        tilt: Math.floor(Math.random()*10)-10,
+      });
+    }
+
+    let angle = 0;
+    function draw(){
+      confettiCtx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      confetti.forEach(c=>{
+        confettiCtx.beginPath();
+        confettiCtx.lineWidth = c.r;
+        confettiCtx.strokeStyle = c.color;
+        confettiCtx.moveTo(c.x + c.tilt + c.r/2, c.y);
+        confettiCtx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2);
+        confettiCtx.stroke();
+        c.y += 2;
+        if(c.y>window.innerHeight) c.y= -10;
+      });
+      angle += 0.01;
+      requestAnimationFrame(draw);
+    }
+    draw();
+    setTimeout(()=>{ confettiCtx.clearRect(0,0,window.innerWidth,window.innerHeight); },3000);
+  }
+
   // Mark done
-  markDoneBtn.addEventListener("click", () => {
-    photoInput.click();
-  });
+  markDoneBtn.addEventListener("click", () => photoInput.click());
 
   photoInput.addEventListener("change", e => {
     const file = e.target.files[0];
-    if (!file) return;
-
+    if(!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      // Save to localStorage
+      // Save photo
       const photos = JSON.parse(localStorage.getItem("proof-gallery") || "[]");
       photos.push(reader.result);
       localStorage.setItem("proof-gallery", JSON.stringify(photos));
 
-      // Mark today habit complete
+      // Mark today complete
       localStorage.setItem("habit-" + dayIndex, "true");
 
-      // Show popup note
-      noteMessage.textContent = "✨ Habit completed! Great job jaan 💖";
-
-      // Update gallery & progress & calendar
+      // Update UI
       loadGallery();
       updateProgress();
       calendar.children[dayIndex].classList.add("completed");
+      noteMessage.textContent = "✨ Habit completed! Great job jaan 💖";
 
-      // Weekly bonus check
+      // Trigger confetti
+      triggerConfetti();
+
+      // Weekly bonus
       const weekStart = Math.floor(dayIndex / 7) * 7;
       let weekComplete = true;
-      for (let i = weekStart; i < weekStart + 7 && i < 30; i++) {
-        if (!localStorage.getItem("habit-" + i)) weekComplete = false;
+      for(let i=weekStart;i<weekStart+7 && i<30;i++){
+        if(!localStorage.getItem("habit-"+i)) weekComplete=false;
       }
-      if (weekComplete) {
-        setTimeout(() => {
-          alert("🎁 Weekly bonus unlocked! Check your special message 💌");
-        }, 300);
-      }
+      if(weekComplete) setTimeout(()=>{ alert("🎁 Weekly bonus unlocked! 💌"); }, 400);
 
-      // Month-end check
-      if (dayIndex === 29) {
-        setTimeout(() => {
-          alert("💖 Congratulations! You completed the 30-day challenge! Here's your special final note 😘");
-        }, 500);
-      }
+      // Month-end bonus
+      if(dayIndex===29) setTimeout(()=>{ alert("💖 Congratulations! 30-day challenge complete! 😘"); },500);
     };
     reader.readAsDataURL(file);
+  });
+
+  // Add to Home Screen
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt=e;
+    installBtn.style.display="block";
+  });
+
+  installBtn.addEventListener('click',()=>{
+    installBtn.style.display="none";
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice=>{
+      deferredPrompt=null;
+    });
   });
 });
