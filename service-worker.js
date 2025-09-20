@@ -1,22 +1,49 @@
-const CACHE_NAME = "habit-app-cache-v1";
+const CACHE_NAME = "saniya-habit-tracker-v1";
 const urlsToCache = [
   "/",
   "/index.html",
   "/style.css",
   "/script.js",
-  "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png"
+  "/manifest.json"
 ];
 
-self.addEventListener("install", event => {
+// Install event - cache resources
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
-self.addEventListener("fetch", event => {
+// Fetch event - serve from cache, fallback to network
+self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
+    caches.match(event.request)
+      .then((response) => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
+});
+
+// Activate event - clean up old caches
+self.addEventListener("activate", (event) => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
 });
