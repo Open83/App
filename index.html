@@ -47,38 +47,6 @@ h1 {
   font-weight: 700;
 }
 
-/* Debug Console */
-#debug-console {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #00ff00;
-  padding: 10px;
-  border-radius: 10px;
-  font-family: monospace;
-  font-size: 10px;
-  max-width: 300px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 9999;
-  display: none;
-}
-
-#debug-toggle {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  background: #e91e63;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 12px;
-  cursor: pointer;
-  z-index: 9999;
-}
-
 /* Calendar */
 .calendar {
   display: grid;
@@ -106,7 +74,6 @@ h1 {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  user-select: none;
 }
 
 .calendar-day:hover {
@@ -196,7 +163,6 @@ h1 {
   box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
-  user-select: none;
 }
 
 #mark-done:hover {
@@ -297,33 +263,19 @@ h1 {
   transform: scale(1.1);
 }
 
-/* Install button - FIXED */
+/* Install button */
 #install-btn {
   margin-top: 20px;
-  padding: 15px 25px;
+  padding: 12px 25px;
   border: none;
   background: linear-gradient(135deg, #9c27b0, #ba68c8);
   color: white;
   border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 16px;
-  display: block;
+  font-size: 14px;
+  display: none;
   transition: all 0.3s ease;
-  user-select: none;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#install-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 5px 15px rgba(156, 39, 176, 0.3);
-}
-
-#install-btn:active {
-  transform: scale(0.98);
 }
 
 /* Confetti canvas */
@@ -351,11 +303,9 @@ h1 {
   box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
   z-index: 999;
   display: none;
-  max-width: 90%;
-  text-align: center;
 }
 
-/* Modal - FIXED */
+/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -368,12 +318,11 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 600;
   z-index: 1000;
   text-align: center;
   padding: 20px;
-  box-sizing: border-box;
 }
 
 .modal.hidden {
@@ -397,7 +346,6 @@ h1 {
   font-weight: 600;
   font-size: 16px;
   transition: all 0.3s ease;
-  user-select: none;
 }
 
 /* Mobile responsive */
@@ -421,23 +369,10 @@ h1 {
     width: 100%;
     padding: 15px;
   }
-  
-  .modal {
-    font-size: 16px;
-    padding: 15px;
-  }
-  
-  .modal h2 {
-    font-size: 28px;
-  }
 }
 </style>
 </head>
 <body>
-<!-- Debug Console -->
-<button id="debug-toggle">Debug</button>
-<!-- <div id="debug-console"></div> -->
-
 <div class="app-container">
   <h1>💖 Saniya's 30-Day Habit Tracker</h1>
   
@@ -475,7 +410,7 @@ h1 {
     </div>
   </div>
   
-  <!-- Add to Home Screen Button - FIXED -->
+  <!-- Add to Home Screen Button -->
   <button id="install-btn">Add to Home Screen 📲</button>
 </div>
 
@@ -487,26 +422,8 @@ h1 {
 <div id="modal" class="modal hidden"></div>
 
 <script>
-// Debug Console
-const debugConsole = document.getElementById('debug-console');
-const debugToggle = document.getElementById('debug-toggle');
-let debugVisible = false;
-
-function debugLog(message) {
-  console.log(message);
-  const timestamp = new Date().toLocaleTimeString();
-  debugConsole.innerHTML += `<div>[${timestamp}] ${message}</div>`;
-  debugConsole.scrollTop = debugConsole.scrollHeight;
-}
-
-debugToggle.addEventListener('click', () => {
-  debugVisible = !debugVisible;
-  debugConsole.style.display = debugVisible ? 'block' : 'none';
-  debugToggle.textContent = debugVisible ? 'Hide' : 'Debug';
-});
-
 document.addEventListener("DOMContentLoaded", function() {
-  debugLog("🚀 DOM Content Loaded - Starting app initialization");
+  console.log("DOM Content Loaded - Starting app initialization");
   
   // Set the start date (September 25, 2025)
   const startDate = new Date(2025, 8, 25); // Month is 0-indexed
@@ -517,9 +434,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const diffTime = today - startDate;
   const dayIndex = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
   
-  debugLog(`📅 Start Date: ${startDate.toDateString()}`);
-  debugLog(`📅 Today: ${today.toDateString()}`);
-  debugLog(`📊 Day Index: ${dayIndex}`);
+  console.log('Start Date:', startDate.toDateString());
+  console.log('Today:', today.toDateString());
+  console.log('Day Index:', dayIndex);
 
   const habits = [
     "Drink 6–8 glasses of water 💧",
@@ -569,19 +486,11 @@ document.addEventListener("DOMContentLoaded", function() {
   const popup = document.getElementById("popup");
   const modal = document.getElementById("modal");
 
-  debugLog("🔍 Checking DOM elements...");
-  
   // Check if elements exist
   if (!calendar) {
-    debugLog("❌ Calendar element not found!");
+    console.error("Calendar element not found!");
     return;
   }
-  if (!installBtn) {
-    debugLog("❌ Install button not found!");
-    return;
-  }
-  
-  debugLog("✅ All DOM elements found");
 
   // Set canvas size
   const confettiCtx = confettiCanvas.getContext('2d');
@@ -594,26 +503,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Helper functions
   function showPopup(message) {
-    debugLog(`📱 Showing popup: ${message}`);
     popup.textContent = message;
     popup.style.display = 'block';
-    setTimeout(() => popup.style.display = 'none', 4000);
+    setTimeout(() => popup.style.display = 'none', 3000);
   }
 
   function showModal(title, msg) {
-    debugLog(`📋 Showing modal: ${title}`);
     modal.innerHTML = `<h2>${title}</h2><p>${msg}</p><button onclick="hideModal()">Close</button>`;
     modal.classList.remove('hidden');
   }
 
   window.hideModal = function() {
-    debugLog("❌ Hiding modal");
     modal.classList.add('hidden');
   }
 
   // Create calendar with actual dates
   function createCalendar() {
-    debugLog("📅 Creating calendar...");
+    console.log("Creating calendar...");
     calendar.innerHTML = '';
     
     for (let i = 0; i < 30; i++) {
@@ -631,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // Add classes based on status
       if (i === dayIndex) {
         dayDiv.classList.add("today");
-        debugLog(`📍 Today is day ${i + 1} (${dayNumber})`);
+        console.log(`Today is day ${i + 1} (${dayNumber})`);
       }
       
       if (localStorage.getItem(`habit-${i}`)) {
@@ -644,7 +550,7 @@ document.addEventListener("DOMContentLoaded", function() {
       
       calendar.appendChild(dayDiv);
     }
-    debugLog("✅ Calendar created successfully");
+    console.log("Calendar created successfully");
   }
 
   // Set current habit
@@ -700,7 +606,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Short confetti animation (2 seconds only)
   function triggerConfetti() {
-    debugLog("🎊 Triggering confetti animation");
     const confettiArray = [];
     const colors = ['#e91e63', '#f06292', '#ba68c8', '#ab47bc', '#ff4081'];
     let animationId;
@@ -749,18 +654,13 @@ document.addEventListener("DOMContentLoaded", function() {
         cancelAnimationFrame(animationId);
       }
       confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      debugLog("✅ Confetti stopped after 2 seconds");
+      console.log("Confetti stopped after 2 seconds");
     }, 2000);
   }
 
   // Mark habit as done
-  markDoneBtn.addEventListener("click", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    debugLog("📸 Mark done button clicked");
-    
+  markDoneBtn.addEventListener("click", function() {
     if (dayIndex >= 30 || localStorage.getItem(`habit-${dayIndex}`)) {
-      debugLog("⚠️ Task already done or challenge complete");
       return;
     }
     photoInput.click();
@@ -770,15 +670,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const file = e.target.files[0];
     if (!file) return;
 
-    debugLog("📷 Photo selected, processing...");
     const reader = new FileReader();
     reader.onload = function() {
       const photos = JSON.parse(localStorage.getItem("proof-gallery") || "[]");
       photos.push(reader.result);
       localStorage.setItem("proof-gallery", JSON.stringify(photos));
       localStorage.setItem(`habit-${dayIndex}`, "true");
-      
-      debugLog("💾 Photo saved to localStorage");
       
       // Update UI
       loadGallery();
@@ -831,42 +728,22 @@ document.addEventListener("DOMContentLoaded", function() {
     reader.readAsDataURL(file);
   });
 
-  // PWA Install - Enhanced with debugging
+  // PWA Install - Enhanced for better compatibility
   let deferredPrompt;
   let isInstallPromptShown = false;
   
-  debugLog("🔧 Setting up PWA installation...");
+  // Show install button for iOS users
+  function checkiOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }
   
-  // Check browser and device info
-  const userAgent = navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-  const isAndroid = /Android/.test(userAgent);
-  const isChrome = /Chrome/.test(userAgent);
-  const isSafari = /Safari/.test(userAgent) && !isChrome;
-  
-  debugLog(`📱 Device Info: iOS=${isIOS}, Android=${isAndroid}, Chrome=${isChrome}, Safari=${isSafari}`);
-  debugLog(`🌐 User Agent: ${userAgent}`);
-  
-  // Check PWA support
-  const hasPWASupport = 'serviceWorker' in navigator;
-  const hasBeforeInstallPrompt = 'onbeforeinstallprompt' in window;
-  
-  debugLog(`⚙️ PWA Support: ServiceWorker=${hasPWASupport}, BeforeInstallPrompt=${hasBeforeInstallPrompt}`);
-  
-  // Check if already installed
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                       window.navigator.standalone === true;
-  debugLog(`📲 Already installed: ${isStandalone}`);
-
   // Show install button for Android/Desktop users
   window.addEventListener('beforeinstallprompt', function(e) {
-    debugLog("🎯 beforeinstallprompt event fired!");
+    console.log('beforeinstallprompt event fired');
     e.preventDefault();
     deferredPrompt = e;
     installBtn.style.display = "block";
     isInstallPromptShown = true;
-    
-    debugLog("✅ Install prompt captured and button shown");
     
     // Show popup to inform user
     setTimeout(() => {
@@ -874,146 +751,77 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 2000);
   });
 
-  // For iOS users or fallback
-  if (isIOS && !isInstallPromptShown && !isStandalone) {
-    debugLog("🍎 iOS detected, showing iOS install button");
+  // For iOS users, show install instructions
+  if (checkiOS() && !isInstallPromptShown) {
     installBtn.style.display = "block";
     installBtn.textContent = "Install App (iOS) 📱";
-    installBtn.style.background = "linear-gradient(135deg, #007AFF, #5AC8FA)";
-  } else if (!isInstallPromptShown && !isStandalone) {
-    debugLog("🌐 No install prompt, showing manual install button");
-    installBtn.style.display = "block";
-    installBtn.textContent = "Install App 📱";
-  } else if (isStandalone) {
-    debugLog("✅ App already installed, hiding button");
-    installBtn.style.display = "none";
   }
 
-  // Install button click handler
-  installBtn.addEventListener('click', function(e) {
-    debugLog("🔘 Install button clicked!");
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Prevent text selection
-    if (window.getSelection) {
-      window.getSelection().removeAllRanges();
-    }
-    
-    if (isIOS) {
-      debugLog("🍎 Showing iOS installation instructions");
+  installBtn.addEventListener('click', function() {
+    if (checkiOS()) {
       // iOS installation instructions
       showModal("📱 Install on iOS", 
-        "To install this app on your iPhone/iPad:<br><br>" +
-        "1️⃣ Tap the <strong>Share</strong> button <img src='data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" fill=\"%23007AFF\" viewBox=\"0 0 24 24\"%3E%3Cpath d=\"M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92S19.61 16.08 18 16.08z\"/%3E%3C/svg%3E' alt='share' style='vertical-align: middle;'> in Safari<br>" +
-        "2️⃣ Scroll down and tap <strong>'Add to Home Screen'</strong><br>" +
-        "3️⃣ Tap <strong>'Add'</strong> in the top right corner<br><br>" +
+        "To install this app on iOS:<br><br>" +
+        "1️⃣ Tap the Share button in Safari<br>" +
+        "2️⃣ Scroll down and tap 'Add to Home Screen'<br>" +
+        "3️⃣ Tap 'Add' in the top right<br><br>" +
         "The app will appear on your home screen! 💖"
       );
     } else if (deferredPrompt) {
-      debugLog("🤖 Using native install prompt");
       // Android/Desktop installation
       installBtn.style.display = "none";
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(function(result) {
-        debugLog(`📊 User choice result: ${result.outcome}`);
+        console.log('User choice:', result.outcome);
         if (result.outcome === 'accepted') {
-          debugLog("✅ User accepted installation");
-          // showPopup("🎉 App installed successfully!");
+          showPopup("🎉 App installed successfully!");
         } else {
-          debugLog("❌ User dismissed installation");
-          // showPopup("📱 You can install later from browser menu");
+          showPopup("📱 You can install later from browser menu");
           installBtn.style.display = "block";
         }
         deferredPrompt = null;
-      }).catch((error) => {
-        debugLog(`❌ Install prompt error: ${error}`);
       });
     } else {
-      debugLog("🌐 Showing fallback installation instructions");
       // Fallback for browsers that don't support beforeinstallprompt
-      let instructions = "To install this app:<br><br>";
-      
-      if (isChrome) {
-        instructions += "🔹 <strong>Chrome:</strong> Click menu (⋮) → 'Install Saniya's Habits'<br>";
-      } else if (isSafari) {
-        instructions += "🔹 <strong>Safari:</strong> Share → 'Add to Home Screen'<br>";
-      } else {
-        instructions += "🔹 <strong>Chrome/Edge:</strong> Click menu (⋮) → 'Install app'<br>";
-        instructions += "🔹 <strong>Firefox:</strong> Click menu → 'Install'<br>";
-        instructions += "🔹 <strong>Safari:</strong> Share → 'Add to Home Screen'<br>";
-      }
-      
-      instructions += "<br>Or bookmark this page for quick access! 💖";
-      
-      showModal("📱 Install App", instructions);
+      showModal("📱 Install App", 
+        "To install this app:<br><br>" +
+        "🔹 <strong>Chrome/Edge:</strong> Click menu (⋮) → 'Install app'<br>" +
+        "🔹 <strong>Firefox:</strong> Click menu → 'Install'<br>" +
+        "🔹 <strong>Safari:</strong> Share → 'Add to Home Screen'<br><br>" +
+        "Or bookmark this page for quick access! 💖"
+      );
     }
   });
 
-  // Service Worker Registration with debugging
+  // Service Worker Registration with better error handling
   if ('serviceWorker' in navigator) {
-    debugLog("⚙️ Registering service worker...");
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('service-worker.js')
         .then(function(registration) {
-          debugLog("✅ Service Worker registered successfully");
-          debugLog(`🔧 Registration scope: ${registration.scope}`);
+          console.log('Service Worker registered successfully:', registration);
           
           // Check for updates
           registration.addEventListener('updatefound', () => {
-            debugLog("🔄 New service worker version found");
+            console.log('New service worker available');
             showPopup("🔄 App updated! Refresh to see changes.");
           });
-          
-          // Check if service worker is controlling the page
-          if (registration.active) {
-            debugLog("🟢 Service worker is active and controlling the page");
-          }
         })
         .catch(function(error) {
-          debugLog(`❌ Service Worker registration failed: ${error}`);
-          console.error('Service Worker registration failed:', error);
+          console.log('Service Worker registration failed:', error);
         });
     });
   } else {
-    debugLog("❌ Service Worker not supported in this browser");
+    console.log('Service Worker not supported');
   }
 
-  // Check manifest
-  fetch('manifest.json')
-    .then(response => {
-      if (response.ok) {
-        debugLog("✅ Manifest.json loaded successfully");
-        return response.json();
-      } else {
-        debugLog(`❌ Manifest.json failed to load: ${response.status}`);
-      }
-    })
-    .then(manifest => {
-      if (manifest) {
-        debugLog(`📋 Manifest name: ${manifest.name}`);
-        debugLog(`📋 Manifest start_url: ${manifest.start_url}`);
-      }
-    })
-    .catch(error => {
-      debugLog(`❌ Manifest error: ${error}`);
-    });
-
   // Initialize everything
-  debugLog("🎯 Initializing app components...");
+  console.log("Initializing app...");
   createCalendar();
   setCurrentHabit();
   loadGallery();
   updateProgress();
-  debugLog("🎉 App initialized successfully! 💖");
-  
-  // Show debug info initially
-  setTimeout(() => {
-    debugToggle.click();
-  }, 1000);
+  console.log("App initialized successfully! 💖");
 });
 </script>
 </body>
 </html>
-
-
