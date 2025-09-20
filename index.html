@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saniya’s Habit Tracker</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#ff4081">
 </head>
 <body>
   <div class="app-container">
@@ -38,13 +39,22 @@
       <h3>📸 My Proof Gallery</h3>
       <div id="gallery-photos"></div>
     </div>
+
+    <!-- Add to Home Screen Button -->
+    <button id="install-btn">Add to Home Screen 📲</button>
   </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
 
   <script src="script.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(() => console.log("Service Worker Registered"));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('Service Worker Registered'))
+          .catch(err => console.log('SW registration failed:', err));
+      });
     }
   </script>
 </body>
