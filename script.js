@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const startDate = new Date(2025, 8, 25); // September = 8 (0-based)
+  const today = new Date();
+  const diffTime = today - startDate;
+  const dayIndex = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
   const habits = [
     "Drink 6–8 glasses of water 💧",
     "Smile in the mirror for 1 minute 😊",
@@ -32,8 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Think about our future together ✨"
   ];
 
-  const today = new Date();
-  const dayIndex = today.getDate() - 1; // 0-based
   const habitTitle = document.getElementById("habit-title");
   const habitDesc = document.getElementById("habit-desc");
   const markDoneBtn = document.getElementById("mark-done");
@@ -107,6 +110,25 @@ document.addEventListener("DOMContentLoaded", () => {
       loadGallery();
       updateProgress();
       calendar.children[dayIndex].classList.add("completed");
+
+      // Weekly bonus check
+      const weekStart = Math.floor(dayIndex / 7) * 7;
+      let weekComplete = true;
+      for (let i = weekStart; i < weekStart + 7 && i < 30; i++) {
+        if (!localStorage.getItem("habit-" + i)) weekComplete = false;
+      }
+      if (weekComplete) {
+        setTimeout(() => {
+          alert("🎁 Weekly bonus unlocked! Check your special message 💌");
+        }, 300);
+      }
+
+      // Month-end check
+      if (dayIndex === 29) {
+        setTimeout(() => {
+          alert("💖 Congratulations! You completed the 30-day challenge! Here's your special final note 😘");
+        }, 500);
+      }
     };
     reader.readAsDataURL(file);
   });
