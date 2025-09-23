@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery - Saniya’s Habit Tracker</title>
+  <title>Gallery - Saniya's Habit Tracker</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff99aa">
 </head>
 <body>
   <header>
@@ -14,16 +16,64 @@
       <a href="gallery.html">Gallery</a>
     </nav>
   </header>
-
+  
   <main>
-    <section id="gallery-grid"></section>
+    <!-- Loading Section -->
+    <section id="loading" class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Loading your memories...</p>
+    </section>
+
+    <!-- Gallery Stats -->
+    <section id="gallery-stats" class="hidden">
+      <div class="points-card">
+        <h3>Your Journey</h3>
+        <p>Completed Days: <span id="completed-count">0</span>/30</p>
+        <p>Total Memories: <span id="total-photos">0</span></p>
+      </div>
+    </section>
+
+    <!-- Filter Buttons -->
+    <section id="filter-section" class="hidden">
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="week1">Week 1</button>
+        <button class="filter-btn" data-filter="week2">Week 2</button>
+        <button class="filter-btn" data-filter="week3">Week 3</button>
+        <button class="filter-btn" data-filter="week4">Week 4</button>
+      </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section id="gallery-grid" class="hidden"></section>
+
+    <!-- Empty State -->
+    <section id="empty-state" class="hidden">
+      <div class="empty-message">
+        <h2>🌸 No memories yet!</h2>
+        <p>Start completing your daily habits to see your beautiful journey here.</p>
+        <a href="index.html" class="back-btn">Start Your Journey</a>
+      </div>
+    </section>
   </main>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button id="modal-close" class="modal-close">×</button>
+      <div id="modal-media"></div>
+      <div class="modal-info">
+        <h3 id="modal-title"></h3>
+        <p id="modal-date"></p>
+      </div>
+    </div>
+  </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-storage-compat.js"></script>
-
   <script src="gallery.js"></script>
 </body>
 </html>
