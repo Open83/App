@@ -8,13 +8,11 @@ const firebaseConfig = {
   appId: "1:852407491441:web:448918c78ed2b62c2ef4d0",
   measurementId: "G-HKQR6NH2HB"
 };
-
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// 30-Day Habits
+// --- 30-Day Habits ---
 const habits = [
   "Drink 6–8 glasses of water 💧",
   "Smile in the mirror for 1 minute 😊",
@@ -48,7 +46,7 @@ const habits = [
   "Reflect on your week & smile 😊"
 ];
 
-// 30-Day Random Appreciation Messages Pool
+// --- 30-Day Random Appreciation Messages Pool ---
 const messagesPool = [
   ["Day 1: You're amazing, keep shining! 🌸","Day 1: So proud of you today! 💖","Day 1: You make my heart happy! ❤️"],
   ["Day 2: Keep spreading your light! 🌟","Day 2: I love seeing you happy! 💌","Day 2: You’re unstoppable! 💖"],
@@ -82,15 +80,15 @@ const messagesPool = [
   ["Day 30: Month complete! 🎉","Day 30: You’re my queen 👑","Day 30: Forever proud of you! 💌"]
 ];
 
-// Weekly bonus messages
+// --- Weekly bonus messages ---
 const bonusMessages = {
-  1: { type: "text", content: "💝 First week done! I love you infinitely, meri jaan!" },
-  2: { type: "audio", content: "bonus/week2.mp3" },
-  3: { type: "video", content: "bonus/week3.mp4" },
-  4: { type: "text", content: "🌹 You’re my eternal queen. Forever proud of you!" }
+  1: { type:"text", content:"💝 First week done! I love you infinitely, meri jaan!" },
+  2: { type:"audio", content:"bonus/week2.mp3" },
+  3: { type:"video", content:"bonus/week3.mp4" },
+  4: { type:"text", content:"🌹 You’re my eternal queen. Forever proud of you!" }
 };
 
-// DOM elements
+// --- Elements ---
 const calendar = document.getElementById("calendar");
 const taskSection = document.getElementById("task-section");
 const taskTitle = document.getElementById("task-title");
@@ -102,110 +100,83 @@ const progressFill = document.getElementById("progress-fill");
 const progressText = document.getElementById("progress-text");
 
 // Popup
-function showPopup(content) {
+function showPopup(content){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
   popupContent.innerHTML = content;
   popup.classList.remove("hidden");
   popupContent.classList.add("fade-in");
 }
-document.getElementById("close-popup").addEventListener("click", () => {
-  const popupContent = document.getElementById("popup-content");
-  popupContent.classList.remove("fade-in");
+document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
 });
 
-// Update calendar
-function updateCalendar(data) {
-  calendar.innerHTML = "";
+// Load Progress
+db.collection("progress").doc("saniya").onSnapshot(doc=>{
+  const data = doc.data() || { proofs: [], points:0 };
+  updateCalendar(data);
+});
+
+// Update Calendar
+function updateCalendar(data){
   const today = new Date().getDate();
-  for (let i = 0; i < 30; i++) {
+  calendar.innerHTML = "";
+  for(let i=0;i<30;i++){
     const div = document.createElement("div");
-    div.className = "day";
-    div.textContent = i+1;
-
-    // Done tasks
-    if (data.proofs?.some(p => p.day === i+1)) div.classList.add("done");
-
-    // Bonus
-    if ((i+1)%7===0) {
-      div.classList.add("bonus");
-      const weekProof = data.proofs?.filter(p => p.day >= i-6 && p.day <= i+1).length;
-      if (weekProof===7) div.textContent += " ⭐";
-    }
-
-    // Date lock
-    if (i+1>today) div.classList.add("locked");
-
-    div.addEventListener("click", () => openTask(i, today));
+    div.className="day";
+    div.textContent=i+1;
+    if(data.proofs?.some(p=>p.day===i+1)) div.classList.add("done");
+    if((i+1)%7===0) div.classList.add("bonus");
+    if(i+1>today) div.classList.add("locked");
+    div.addEventListener("click",()=>openTask(i,today,data));
     calendar.appendChild(div);
   }
-
-  pointsDisplay.textContent = data.points || 0;
-  const progress = ((data.points || 0)/300*100).toFixed(0);
-  progressFill.style.width = progress + "%";
-  progressText.textContent = progress + "%";
+  pointsDisplay.textContent=data.points||0;
+  const progress = ((data.points||0)/300*100).toFixed(0);
+  progressFill.style.width=progress+"%";
+  progressText.textContent=progress+"%";
 }
 
-// Open task
-function openTask(dayIndex, today) {
-  if (dayIndex+1 > today) {
-    showPopup("🚫 Future tasks cannot be completed yet!");
-    return;
-  }
+// Open Task
+function openTask(dayIndex,today,data){
+  if(dayIndex+1>today){ showPopup("🚫 Future tasks cannot be completed yet!"); return; }
   taskSection.classList.remove("hidden");
-  taskTitle.textContent = `Task for Day ${dayIndex+1}`;
+  taskTitle.textContent=`Task for Day ${dayIndex+1}`;
   const messages = messagesPool[dayIndex];
-  taskDesc.textContent = habits[dayIndex] + " — " + messages[Math.floor(Math.random()*messages.length)];
-  markDoneBtn.onclick = () => submitTask(dayIndex, today);
+  taskDesc.textContent = `${habits[dayIndex]} — ${messages[Math.floor(Math.random()*messages.length)]}`;
+  markDoneBtn.onclick = () => submitTask(dayIndex,data);
 }
 
-// Submit task
-function submitTask(dayIndex, today) {
+// Submit Task
+function submitTask(dayIndex,data){
   const file = proofUpload.files[0];
-  if (!file) return alert("Upload proof!");
-
+  if(!file) return alert("Upload proof!");
   const storageRef = storage.ref(`proofs/day${dayIndex+1}/${file.name}`);
   const uploadTask = storageRef.put(file);
 
-  uploadTask.on("state_changed", null, (error) => {
-    console.error("Upload failed:", error);
-  }, async () => {
-    const downloadURL = await storageRef.getDownloadURL();
-    const proofData = { day: dayIndex+1, url: downloadURL };
-
-    db.collection("progress").doc("saniya").get().then(doc => {
-      let data = doc.data() || { proofs: [], points: 0 };
-      if (!data.proofs.some(p => p.day===dayIndex+1)) {
-        data.proofs.push(proofData);
-        data.points += 10;
+  uploadTask.on("state_changed",null,error=>console.error(error), async ()=>{
+    const url = await storageRef.getDownloadURL();
+    let progressData = { ...data };
+    if(!progressData.proofs.some(p=>p.day===dayIndex+1)){
+      progressData.proofs.push({ day: dayIndex+1, url });
+      progressData.points += 10;
+    }
+    db.collection("progress").doc("saniya").set(progressData).then(()=>{
+      // Show random appreciation message
+      const messages = messagesPool[dayIndex];
+      showPopup(messages[Math.floor(Math.random()*messages.length)]);
+      // Weekly bonus
+      if((dayIndex+1)%7===0){
+        const week = Math.floor(dayIndex/7)+1;
+        const weekProof = progressData.proofs.filter(p=>p.day >= dayIndex-6 && p.day <= dayIndex+1).length;
+        if(weekProof===7){
+          const bonus = bonusMessages[week];
+          if(bonus.type==="text") showPopup(bonus.content);
+          if(bonus.type==="audio") showPopup(`<audio controls src="${bonus.content}"></audio>`);
+          if(bonus.type==="video") showPopup(`<video controls width="250"><source src="${bonus.content}" type="video/mp4"></video>`);
+        } else { showPopup("⚠️ Weekly bonus locked! You missed some tasks."); }
       }
-
-      db.collection("progress").doc("saniya").set(data).then(() => {
-        const messages = messagesPool[dayIndex];
-        showPopup(messages[Math.floor(Math.random()*messages.length)]);
-
-        // Weekly bonus
-        if ((dayIndex+1)%7===0) {
-          const week = Math.floor(dayIndex/7)+1;
-          const weekProof = data.proofs.filter(p => p.day >= dayIndex-6 && p.day <= dayIndex+1).length;
-          if (weekProof===7) {
-            const bonus = bonusMessages[week];
-            if (bonus.type==="text") showPopup(bonus.content);
-            if (bonus.type==="audio") showPopup(`<audio controls src="${bonus.content}"></audio>`);
-            if (bonus.type==="video") showPopup(`<video controls width="250"><source src="${bonus.content}" type="video/mp4"></video>`);
-          } else {
-            showPopup("⚠️ Weekly bonus locked! You missed some tasks.");
-          }
-        }
-
-        updateCalendar(data);
-      });
+      updateCalendar(progressData);
     });
   });
 }
-
-// Load initial
-db.collection("progress").doc("saniya").onSnapshot(doc => {
-  updateCalendar(doc.data() || { proofs: [], points: 0 });
-});
