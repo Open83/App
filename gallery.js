@@ -1,5 +1,4 @@
 const galleryGrid = document.getElementById("gallery-grid");
-const db = firebase.firestore();
 
 db.collection("progress").doc("saniya").onSnapshot(doc => {
   const data = doc.data() || { proofs: [] };
@@ -11,9 +10,11 @@ db.collection("progress").doc("saniya").onSnapshot(doc => {
       el = document.createElement("video");
       el.src = proof.url;
       el.controls = true;
+      el.width = 200;
     } else {
       el = document.createElement("img");
       el.src = proof.url;
+      el.width = 200;
     }
     galleryGrid.appendChild(el);
   });
