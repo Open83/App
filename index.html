@@ -17,13 +17,16 @@
   </header>
 
   <main>
+    <!-- Progress Bar -->
     <section id="progress-bar">
       <div id="progress-fill"></div>
       <span id="progress-text">0%</span>
     </section>
 
+    <!-- Calendar -->
     <section id="calendar"></section>
 
+    <!-- Task Section -->
     <section id="task-section" class="hidden">
       <h2 id="task-title">Today’s Task</h2>
       <p id="task-desc"></p>
@@ -31,30 +34,33 @@
       <button id="mark-done">Mark as Done ✅</button>
     </section>
 
+    <!-- Points -->
     <section id="points-section">
       <p>Total Points: <span id="points">0</span></p>
     </section>
   </main>
 
+  <!-- Popup -->
   <div id="popup" class="hidden">
     <div id="popup-content"></div>
     <button id="close-popup">Close</button>
   </div>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-storage-compat.js"></script>
 
-  <!-- App logic -->
+  <!-- App Logic -->
   <script src="app.js"></script>
 
   <script>
-    // Install prompt
+    // Install PWA
     let deferredPrompt;
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
+
       const installBtn = document.createElement("button");
       installBtn.textContent = "📲 Install App";
       installBtn.className = "install-btn";
@@ -67,7 +73,7 @@
       });
     });
 
-    // Register SW
+    // Register Service Worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
