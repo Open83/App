@@ -1,28 +1,20 @@
 {
-  "name": "Saniya's 30-Day Habit Tracker",
-  "short_name": "Saniya's Habits",
-  "description": "A romantic 30-day habit tracker for Saniya with daily challenges and photo proof",
-  "start_url": "./",
-  "scope": "./",
+  "name": "Saniya’s Habit Tracker",
+  "short_name": "Habit Tracker",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#fce4ec",
-  "theme_color": "#e91e63",
-  "orientation": "portrait-primary",
-  "categories": ["lifestyle", "health", "productivity", "utilities"],
-  "lang": "en-US",
-  "dir": "ltr",
+  "background_color": "#fff8f8",
+  "theme_color": "#ff99aa",
   "icons": [
     {
-      "src": "data:image/png;base64,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",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAMAAADDpiTIAAAA/1BMVEUAAAD/hjb/hzb/iTf/iDf/hzX/hjb/hjb/hzb/hjb/hjb/hzX/hjb/hjb/hjb/hzb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjX/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjb/hjZAjr+NAAAAE3RSTlMAZW/2h8eW5ObQnxvjOJWKBSCMfLXejpcAAAgdSURBVHja7NlpW5swFIDh64xRKhS1tNpitRMXK8W51pda///PmEbcYyUkQIJ2sA4APvkAAAA",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
