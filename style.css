@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff8f8;
+  color: #333;
+}
+
+header {
+  background: #ffccd5;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 2px solid #ff99aa;
+}
+header h1 { margin: 0; font-size: 1.5rem; }
+nav { margin-top: 0.5rem; }
+nav a { margin: 0 10px; text-decoration: none; color: #d6336c; font-weight: bold; }
+
+main { padding: 1rem; }
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.day {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.day.done { background: #b2f2bb; }
+.day.bonus { background: #ffe066; }
+
+#task-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #fff0f6;
+  border-radius: 8px;
+}
+
+#popup {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+}
+#popup.hidden { display: none; }
+#popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 300px;
+}
+
+#gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+#gallery-grid img, #gallery-grid video {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.install-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: #ff99aa;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
