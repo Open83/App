@@ -1,50 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Habit Tracker</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saniya's Habit Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff99aa">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Habit Tracker">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='180' height='180' rx='20' fill='%23ff99aa'/%3E%3Ctext x='90' y='105' text-anchor='middle' font-size='75' fill='white'%3E🌸%3C/text%3E%3C/svg%3E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Habit Tracker">
 </head>
 <body>
   <header>
-    <h1>🌸 30-Day Habit Tracker 🌸</h1>
+    <h1>🌸 Saniya's Habit Tracker</h1>
     <nav>
       <a href="index.html">Home</a>
       <a href="gallery.html">Gallery</a>
     </nav>
   </header>
-
+  
   <main>
-    <!-- Calendar Section -->
-    <section id="calendar-section">
-      <div id="calendar"></div>
+    <!-- Loading Section -->
+    <section id="loading" class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Loading your habits...</p>
     </section>
+
+    <!-- Progress Bar -->
+    <section id="progress-bar">
+      <div id="progress-fill"></div>
+      <span id="progress-text">0%</span>
+    </section>
+
+    <!-- Current Day Info -->
+    <section id="current-day-info">
+      <p id="day-info">Today is your habit day!</p>
+    </section>
+
+    <!-- Calendar -->
+    <section id="calendar"></section>
 
     <!-- Task Section -->
     <section id="task-section" class="hidden">
-      <h2 id="task-title"></h2>
-      <p id="task-desc"></p>
-
-      <!-- File Upload -->
+      <h2 id="task-title">Today's Habit</h2>
+      <div id="task-desc"></div>
       <div class="file-upload-container">
         <label for="proof-upload" class="file-upload-label">
-          📷 Upload Proof (Image / Video)
+          📸 Upload Photo/Video Proof
         </label>
-        <input type="file" id="proof-upload" class="file-upload-input" accept="image/*,video/*" />
+        <input type="file" id="proof-upload" accept="image/*,video/*" class="file-upload-input">
       </div>
-
-      <button id="complete-btn" class="complete-btn">Mark as Complete ✅</button>
+      <button id="mark-done" class="complete-btn">Mark as Done ✅</button>
     </section>
 
-    <!-- Points Section -->
+    <!-- Points -->
     <section id="points-section">
       <div class="points-card">
-        <h3>Your Points</h3>
-        <p><span id="points">0</span> pts</p>
-        <div class="achievement-badges" id="badges"></div>
+        <h3>Your Progress</h3>
+        <p>Total Points: <span id="points">0</span>/300</p>
+        <div class="achievement-badges">
+          <span class="badge">🌟 Starter</span>
+          <span class="badge locked">🏆 Champion</span>
+        </div>
       </div>
     </section>
   </main>
@@ -52,14 +73,207 @@
   <!-- Popup -->
   <div id="popup" class="hidden">
     <div class="popup-overlay"></div>
-    <div id="popup-content"></div>
-    <button class="popup-close">Close</button>
+    <div id="popup-content">
+      <div class="popup-message"></div>
+      <button id="close-popup" class="popup-close">Close</button>
+    </div>
   </div>
 
-  <!-- Install button for PWA -->
-  <button class="install-btn hidden" id="install-btn">📲 Install App</button>
-
-  <!-- App logic -->
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- App Logic -->
   <script src="app.js"></script>
+  
+  <script>
+    // Enhanced PWA Installation with better detection
+    let deferredPrompt;
+    let installButton;
+    let isIOS = false;
+    let isInStandaloneMode = false;
+
+    // Detect iOS
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      isIOS = true;
+    }
+
+    // Detect if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      isInStandaloneMode = true;
+    }
+
+    // Show iOS install instructions
+    function showIOSInstallPrompt() {
+      if (isIOS && !isInStandaloneMode) {
+        const iosPrompt = document.createElement('div');
+        iosPrompt.innerHTML = `
+          <div style="position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #ff99aa, #ff6699); color: white; padding: 1rem; text-align: center; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.2);">
+            <div style="margin-bottom: 0.5rem;">📱 Install this app on your iPhone!</div>
+            <div style="font-size: 0.9rem;">Tap <strong>Share</strong> ↗️ then <strong>"Add to Home Screen"</strong> 📱</div>
+            <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 5px; right: 10px; background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">×</button>
+          </div>
+        `;
+        document.body.appendChild(iosPrompt);
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+          if (iosPrompt.parentElement) {
+            iosPrompt.remove();
+          }
+        }, 10000);
+      }
+    }
+
+    // Standard PWA install for Android/Desktop
+    window.addEventListener("beforeinstallprompt", (e) => {
+      console.log("beforeinstallprompt fired");
+      e.preventDefault();
+      deferredPrompt = e;
+      showInstallButton();
+    });
+
+    function showInstallButton() {
+      if (!installButton && !isInStandaloneMode) {
+        installButton = document.createElement("button");
+        installButton.innerHTML = "📱 Install App";
+        installButton.className = "install-btn";
+        installButton.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          padding: 12px 20px;
+          background: linear-gradient(135deg, #ff99aa, #ff6699);
+          color: white;
+          border: none;
+          border-radius: 25px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 6px 20px rgba(255, 153, 170, 0.4);
+          z-index: 999;
+          animation: bounce 2s infinite;
+        `;
+        
+        document.body.appendChild(installButton);
+        
+        installButton.addEventListener("click", async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            console.log("User choice:", choiceResult.outcome);
+            if (choiceResult.outcome === 'accepted') {
+              console.log('PWA installed successfully');
+            }
+            deferredPrompt = null;
+            hideInstallButton();
+          }
+        });
+      }
+    }
+
+    function hideInstallButton() {
+      if (installButton) {
+        installButton.remove();
+        installButton = null;
+      }
+    }
+
+    // Handle successful installation
+    window.addEventListener('appinstalled', (e) => {
+      console.log('PWA was installed');
+      hideInstallButton();
+    });
+
+    // Check if app is installable on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Show iOS prompt after a delay
+      if (isIOS && !isInStandaloneMode) {
+        setTimeout(showIOSInstallPrompt, 3000);
+      }
+
+      // For browsers that support getInstalledRelatedApps
+      if ('getInstalledRelatedApps' in navigator) {
+        navigator.getInstalledRelatedApps().then(relatedApps => {
+          if (relatedApps.length === 0 && !isInStandaloneMode) {
+            // App not installed, show install button after delay
+            setTimeout(() => {
+              if (!deferredPrompt && !isIOS) {
+                // Fallback install button for browsers without beforeinstallprompt
+                showInstallButton();
+                if (installButton) {
+                  installButton.innerHTML = "📱 Add to Home";
+                  installButton.onclick = () => {
+                    alert("To install:\n\n• Chrome: Menu → Add to Home screen\n• Safari: Share → Add to Home Screen\n• Edge: Menu → Apps → Install this site");
+                  };
+                }
+              }
+            }, 2000);
+          }
+        });
+      }
+    });
+
+    // Register Service Worker with better error handling
+    if ("serviceWorker" in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const registration = await navigator.serviceWorker.register("service-worker.js", {
+            scope: "./"
+          });
+          console.log('SW registered successfully');
+          
+          // Update service worker
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New service worker installed, prompt user to reload
+                if (confirm('New version available! Reload to update?')) {
+                  window.location.reload();
+                }
+              }
+            });
+          });
+        } catch (error) {
+          console.log('SW registration failed:', error);
+        }
+      });
+    }
+
+    // Update current day info
+    function updateDayInfo() {
+      const startTime = localStorage.getItem('habitStartTime');
+      if (startTime) {
+        const start = parseInt(startTime);
+        const now = new Date().getTime();
+        const daysPassed = Math.floor((now - start) / (24 * 60 * 60 * 1000)) + 1;
+        const currentDay = Math.min(daysPassed, 30);
+        
+        const dayInfo = document.getElementById('day-info');
+        if (dayInfo) {
+          if (currentDay <= 30) {
+            dayInfo.textContent = `Today is Day ${currentDay} of your 30-day journey!`;
+          } else {
+            dayInfo.textContent = `🎉 You've completed your 30-day journey! 🎉`;
+          }
+        }
+      }
+    }
+
+    // Update day info periodically
+    setInterval(updateDayInfo, 60000);
+    document.addEventListener('DOMContentLoaded', updateDayInfo);
+
+    // Add bounce animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
