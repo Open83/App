@@ -159,6 +159,7 @@ function renderGallery() {
   
   // Create gallery items
   filteredProofs.forEach(proof => {
+    // Use Cloudinary core library to transform image
     const item = createGalleryItem(proof);
     galleryGrid.appendChild(item);
   });
@@ -196,7 +197,14 @@ function createGalleryItem(proof) {
     item.appendChild(playButton);
   } else {
     mediaElement = document.createElement('img');
-    mediaElement.src = proof.url;
+    // Use Cloudinary core library to transform image
+    const publicId = proof.url.split('/').pop().replace(/\.[^/.]+$/, "");
+    mediaElement.src = cl.url(publicId, {
+      width: 300,
+      crop: 'scale',
+      quality: 'auto',
+      fetch_format: 'auto'
+    });
   }
   
   mediaElement.alt = `Day ${proof.day} - ${habits[proof.day - 1]}`;
