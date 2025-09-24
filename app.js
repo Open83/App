@@ -272,13 +272,8 @@ function submitTask(dayIndex, data) {
   // Simulate upload with setTimeout
   setTimeout(() => {
     try {
-      // Use Cloudinary core library to generate URL
-      const publicId = `proofs/day${dayNum}/${file.name.replace(/\.[^/.]+$/, "")}`;
-      const url = cl.url(publicId, {
-        version: Date.now(),
-        resource_type: 'image',
-        format: file.name.split('.').pop()
-      });
+      // Simulate a Cloudinary URL
+      const url = `https://res.cloudinary.com/${cloudinaryConfig.cloudName}/image/upload/v${Date.now()}/proofs/day${dayNum}/${file.name}`;
       let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
       
       // Add proof if not already exists
