@@ -1,16 +1,22 @@
-// Supabase Config (same as app.js)
-const supabaseUrl = 'https://jvjbwpmgktkxsndtqydc.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2amJ3cG1na3RreHNuZHRxeWRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MDQxNzMsImV4cCI6MjA3NDI4MDE3M30.kDM9B1BlogBqfKabyc9B5gi6DObcIrVBOwaTH6AX4IE';
+// Cloudinary Config (same as app.js)
+const CLOUDINARY_CONFIG = {
+  cloudName: 'your-cloud-name', // You'll need to get this from your Cloudinary dashboard
+  apiKey: '219634793157291',
+  uploadPreset: 'habit_tracker' // You'll need to create this in Cloudinary
+};
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+// Storage Keys
+const STORAGE_KEYS = {
+  progress: 'habit_progress',
+  startTime: 'habitStartTime'
+};
 
 // Habits array for display
 const habits = [
-  "Drink 6—8 glasses of water 💧",
+  "Drink 6–8 glasses of water 💧",
   "Smile in the mirror for 1 minute 😊", 
   "Listen to your favorite song 🎶",
-  "Write one thing you love about yourself ✏️",
+  "Write one thing you love about yourself ✍️",
   "Take a 10 min walk/stretch 🚶‍♀️",
   "Send a heart emoji ❤️ to someone special",
   "Meditate for 5 minutes 🧘‍♀️",
@@ -35,7 +41,7 @@ const habits = [
   "Organize your desk or room 🧹",
   "Drink a cup of herbal tea 🍵",
   "Compliment someone today 🌹",
-  "Write a short poem or note ✏️",
+  "Write a short poem or note ✍️",
   "Reflect on your week & smile 😊"
 ];
 
@@ -54,61 +60,42 @@ const modalTitle = document.getElementById("modal-title");
 const modalDate = document.getElementById("modal-date");
 
 let currentFilter = 'all';
-let allApp = [];
+let allProofs = [];
 
-// Load gallery data with real-time updates
-async function loadGalleryData() {
-  try {
-    const { data, error } = await supabase
-      .from('progress')
-      .select('*')
-      .eq('user_id', 'saniya')
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error loading gallery data:', error);
-      throw error;
+// Local Storage Helper Functions
+function getProgressData() {
+  const data = localStorage.getItem(STORAGE_KEYS.progress);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing progress data:", e);
     }
-
-    if (data && data.App) {
-      allApp = data.App || [];
-    } else {
-      allApp = [];
-    }
-
-    loading.classList.add("hidden");
-    displayGallery();
-  } catch (error) {
-    console.error('Error:', error);
-    loading.classList.add("hidden");
-    showEmptyState();
   }
+  return { proofs: [], points: 0, completedDays: [] };
 }
 
-// Set up real-time subscription for gallery updates
-function setupRealtimeSubscription() {
-  const subscription = supabase
-    .channel('gallery-changes')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'progress',
-      filter: 'user_id=eq.saniya'
-    }, (payload) => {
-      console.log('Gallery real-time update:', payload);
-      if (payload.new && payload.new.App) {
-        allApp = payload.new.App || [];
-        displayGallery();
-      }
-    })
-    .subscribe();
+// Listen for storage changes (when data is updated from other tabs)
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEYS.progress) {
+    const newData = JSON.parse(e.newValue || '{}');
+    allProofs = newData.proofs || [];
+    loading.classList.add("hidden");
+    displayGallery();
+  }
+});
 
-  return subscription;
+// Load gallery data
+function loadGalleryData() {
+  const data = getProgressData();
+  allProofs = data.proofs || [];
+  loading.classList.add("hidden");
+  displayGallery();
 }
 
 // Display gallery
 function displayGallery() {
-  if (allApp.length === 0) {
+  if (allProofs.length === 0) {
     showEmptyState();
     return;
   }
@@ -137,8 +124,8 @@ function hideEmptyState() {
 
 // Update stats
 function updateStats() {
-  completedCount.textContent = allApp.length;
-  totalPhotos.textContent = allApp.length;
+  completedCount.textContent = allProofs.length;
+  totalPhotos.textContent = allProofs.length;
 }
 
 // Setup filter buttons
@@ -159,7 +146,7 @@ function setupFilters() {
 function renderGallery() {
   galleryGrid.innerHTML = "";
   
-  let filteredApp = allApp;
+  let filteredProofs = allProofs;
   
   // Apply filter
   if (currentFilter !== 'all') {
@@ -167,22 +154,22 @@ function renderGallery() {
     const weekStart = (weekNum - 1) * 7 + 1;
     const weekEnd = weekNum * 7;
     
-    filteredApp = allApp.filter(proof => 
+    filteredProofs = allProofs.filter(proof => 
       proof.day >= weekStart && proof.day <= weekEnd
     );
   }
   
   // Sort by day
-  filteredApp.sort((a, b) => a.day - b.day);
+  filteredProofs.sort((a, b) => a.day - b.day);
   
   // Create gallery items
-  filteredApp.forEach(proof => {
+  filteredProofs.forEach(proof => {
     const item = createGalleryItem(proof);
     galleryGrid.appendChild(item);
   });
   
   // Show message if no items in filter
-  if (filteredApp.length === 0 && currentFilter !== 'all') {
+  if (filteredProofs.length === 0 && currentFilter !== 'all') {
     const noItemsDiv = document.createElement('div');
     noItemsDiv.className = 'no-items-message';
     noItemsDiv.innerHTML = `
@@ -198,7 +185,12 @@ function createGalleryItem(proof) {
   const item = document.createElement('div');
   item.className = 'gallery-item';
   
-  const isVideo = proof.url.includes('.mp4') || proof.url.includes('video') || proof.url.includes('.mov') || proof.url.includes('.webm');
+  // Detect video based on resourceType or URL
+  const isVideo = proof.resourceType === 'video' || 
+                  proof.url.includes('.mp4') || 
+                  proof.url.includes('video') ||
+                  proof.url.includes('v_') || // Cloudinary video transformation
+                  proof.url.includes('/video/');
   
   let mediaElement;
   if (isVideo) {
@@ -206,6 +198,7 @@ function createGalleryItem(proof) {
     mediaElement.src = proof.url;
     mediaElement.setAttribute('muted', '');
     mediaElement.setAttribute('playsinline', '');
+    mediaElement.setAttribute('preload', 'metadata');
     
     // Add play button overlay
     const playButton = document.createElement('div');
@@ -238,6 +231,15 @@ function createGalleryItem(proof) {
     openModal(proof, isVideo);
   });
   
+  // Error handling for media loading
+  mediaElement.addEventListener('error', () => {
+    console.error('Error loading media:', proof.url);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'media-error';
+    errorDiv.innerHTML = '⚠️ Media failed to load';
+    item.appendChild(errorDiv);
+  });
+  
   item.appendChild(mediaElement);
   item.appendChild(dayBadge);
   
@@ -254,6 +256,7 @@ function openModal(proof, isVideo) {
     mediaElement.src = proof.url;
     mediaElement.controls = true;
     mediaElement.autoplay = true;
+    mediaElement.setAttribute('playsinline', '');
   } else {
     mediaElement = document.createElement('img');
     mediaElement.src = proof.url;
@@ -263,9 +266,21 @@ function openModal(proof, isVideo) {
   modalTitle.textContent = `Day ${proof.day}: ${habits[proof.day - 1]}`;
   
   // Format date
-  const date = proof.timestamp ? 
-    new Date(proof.timestamp).toLocaleDateString() : 
-    'Date not available';
+  let date = 'Date not available';
+  if (proof.timestamp) {
+    try {
+      if (typeof proof.timestamp === 'string') {
+        date = new Date(proof.timestamp).toLocaleDateString();
+      } else if (proof.timestamp.seconds) {
+        // Handle Firestore timestamp format (for backwards compatibility)
+        date = new Date(proof.timestamp.seconds * 1000).toLocaleDateString();
+      } else {
+        date = new Date(proof.timestamp).toLocaleDateString();
+      }
+    } catch (e) {
+      console.error('Error parsing date:', e);
+    }
+  }
   modalDate.textContent = `Completed on: ${date}`;
   
   imageModal.classList.remove('hidden');
@@ -296,13 +311,21 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Initialize gallery
+// Initialize gallery on load
 document.addEventListener('DOMContentLoaded', () => {
   loadGalleryData();
-  setupRealtimeSubscription();
 });
 
-// Add styles for gallery items (same as before)
+// Refresh gallery data periodically (in case of external updates)
+setInterval(() => {
+  const currentData = getProgressData();
+  if (JSON.stringify(currentData.proofs) !== JSON.stringify(allProofs)) {
+    allProofs = currentData.proofs || [];
+    displayGallery();
+  }
+}, 5000); // Check every 5 seconds
+
+// Add styles for gallery items
 const style = document.createElement('style');
 style.textContent = `
   .gallery-item {
@@ -370,6 +393,20 @@ style.textContent = `
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    z-index: 2;
+  }
+  
+  .media-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    text-align: center;
   }
   
   .filter-buttons {
