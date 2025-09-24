@@ -54,7 +54,7 @@ const modalTitle = document.getElementById("modal-title");
 const modalDate = document.getElementById("modal-date");
 
 let currentFilter = 'all';
-let allProofs = [];
+let allApp = [];
 
 // Load gallery data with real-time updates
 async function loadGalleryData() {
@@ -70,10 +70,10 @@ async function loadGalleryData() {
       throw error;
     }
 
-    if (data && data.proofs) {
-      allProofs = data.proofs || [];
+    if (data && data.App) {
+      allApp = data.App || [];
     } else {
-      allProofs = [];
+      allApp = [];
     }
 
     loading.classList.add("hidden");
@@ -96,8 +96,8 @@ function setupRealtimeSubscription() {
       filter: 'user_id=eq.saniya'
     }, (payload) => {
       console.log('Gallery real-time update:', payload);
-      if (payload.new && payload.new.proofs) {
-        allProofs = payload.new.proofs || [];
+      if (payload.new && payload.new.App) {
+        allApp = payload.new.App || [];
         displayGallery();
       }
     })
@@ -108,7 +108,7 @@ function setupRealtimeSubscription() {
 
 // Display gallery
 function displayGallery() {
-  if (allProofs.length === 0) {
+  if (allApp.length === 0) {
     showEmptyState();
     return;
   }
@@ -137,8 +137,8 @@ function hideEmptyState() {
 
 // Update stats
 function updateStats() {
-  completedCount.textContent = allProofs.length;
-  totalPhotos.textContent = allProofs.length;
+  completedCount.textContent = allApp.length;
+  totalPhotos.textContent = allApp.length;
 }
 
 // Setup filter buttons
@@ -159,7 +159,7 @@ function setupFilters() {
 function renderGallery() {
   galleryGrid.innerHTML = "";
   
-  let filteredProofs = allProofs;
+  let filteredApp = allApp;
   
   // Apply filter
   if (currentFilter !== 'all') {
@@ -167,22 +167,22 @@ function renderGallery() {
     const weekStart = (weekNum - 1) * 7 + 1;
     const weekEnd = weekNum * 7;
     
-    filteredProofs = allProofs.filter(proof => 
+    filteredApp = allApp.filter(proof => 
       proof.day >= weekStart && proof.day <= weekEnd
     );
   }
   
   // Sort by day
-  filteredProofs.sort((a, b) => a.day - b.day);
+  filteredApp.sort((a, b) => a.day - b.day);
   
   // Create gallery items
-  filteredProofs.forEach(proof => {
+  filteredApp.forEach(proof => {
     const item = createGalleryItem(proof);
     galleryGrid.appendChild(item);
   });
   
   // Show message if no items in filter
-  if (filteredProofs.length === 0 && currentFilter !== 'all') {
+  if (filteredApp.length === 0 && currentFilter !== 'all') {
     const noItemsDiv = document.createElement('div');
     noItemsDiv.className = 'no-items-message';
     noItemsDiv.innerHTML = `
