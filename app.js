@@ -1,16 +1,22 @@
-// Supabase Config
-const supabaseUrl = 'https://jvjbwpmgktkxsndtqydc.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2amJ3cG1na3RreHNuZHRxeWRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MDQxNzMsImV4cCI6MjA3NDI4MDE3M30.kDM9B1BlogBqfKabyc9B5gi6DObcIrVBOwaTH6AX4IE';
+// Cloudinary Config
+const CLOUDINARY_CONFIG = {
+  cloudName: 'your-cloud-name', // You'll need to get this from your Cloudinary dashboard
+  apiKey: '219634793157291',
+  uploadPreset: 'habit_tracker' // You'll need to create this in Cloudinary
+};
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+// Local Storage Keys
+const STORAGE_KEYS = {
+  progress: 'habit_progress',
+  startTime: 'habitStartTime'
+};
 
 // --- 30-Day Habits ---
 const habits = [
-  "Drink 6—8 glasses of water 💧",
+  "Drink 6–8 glasses of water 💧",
   "Smile in the mirror for 1 minute 😊", 
   "Listen to your favorite song 🎶",
-  "Write one thing you love about yourself ✏️",
+  "Write one thing you love about yourself ✍️",
   "Take a 10 min walk/stretch 🚶‍♀️",
   "Send a heart emoji ❤️ to someone special",
   "Meditate for 5 minutes 🧘‍♀️",
@@ -35,7 +41,7 @@ const habits = [
   "Organize your desk or room 🧹",
   "Drink a cup of herbal tea 🍵",
   "Compliment someone today 🌹",
-  "Write a short poem or note ✏️",
+  "Write a short poem or note ✍️",
   "Reflect on your week & smile 😊"
 ];
 
@@ -76,8 +82,8 @@ const appreciationMessages = [
 // --- Weekly bonus messages ---
 const bonusMessages = {
   1: { type:"text", content:"👏 First week done! I love you infinitely, meri jaan!" },
-  2: { type:"audio", content:"bonus/week2.mp3" },
-  3: { type:"video", content:"bonus/week3.mp4" },
+  2: { type:"text", content:"🌟 Two weeks of amazing progress! You're incredible!" },
+  3: { type:"text", content:"✨ Three weeks strong! Almost there, my love!" },
   4: { type:"text", content:"🌹 You're my eternal queen. Forever proud of you!" }
 };
 
@@ -108,13 +114,47 @@ document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
 });
 
+// Local Storage Helper Functions
+function getProgressData() {
+  const data = localStorage.getItem(STORAGE_KEYS.progress);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing progress data:", e);
+    }
+  }
+  return { 
+    proofs: [], 
+    points: 0,
+    startTime: new Date().getTime(),
+    completedDays: []
+  };
+}
+
+function saveProgressData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.progress, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    console.error("Error saving progress data:", e);
+    return false;
+  }
+}
+
 // Calculate current day based on start time
 function getCurrentDay() {
-  const startTime = localStorage.getItem('habitStartTime');
+  let startTime = localStorage.getItem(STORAGE_KEYS.startTime);
   if (!startTime) {
     // First time user - set start time
     const now = new Date().getTime();
-    localStorage.setItem('habitStartTime', now);
+    localStorage.setItem(STORAGE_KEYS.startTime, now);
+    
+    // Also save to progress data
+    const progressData = getProgressData();
+    progressData.startTime = now;
+    saveProgressData(progressData);
+    
     return 1;
   }
   
@@ -125,73 +165,23 @@ function getCurrentDay() {
 }
 
 // Initialize or load progress data
-async function initializeProgress() {
+function initializeProgress() {
   try {
-    const { data, error } = await supabase
-      .from('progress')
-      .select('*')
-      .eq('user_id', 'saniya')
-      .single();
+    const data = getProgressData();
     
-    let progressData;
-    
-    if (error && error.code === 'PGRST116') {
-      // No data found - create initial record
-      progressData = { 
-        user_id: 'saniya',
-        App: [], 
-        points: 0,
-        start_time: new Date().getTime(),
-        completed_days: []
-      };
-      
-      const { error: insertError } = await supabase
-        .from('progress')
-        .insert([progressData]);
-        
-      if (insertError) {
-        console.error("Error creating initial progress:", insertError);
-        throw insertError;
-      }
-    } else if (error) {
-      console.error("Error fetching progress:", error);
-      throw error;
-    } else {
-      progressData = data;
-      // Sync localStorage with Supabase start time
-      if (progressData.start_time) {
-        localStorage.setItem('habitStartTime', progressData.start_time.toString());
-      }
+    // Sync localStorage start time with progress data
+    if (data.startTime) {
+      localStorage.setItem(STORAGE_KEYS.startTime, data.startTime.toString());
     }
     
     loadingDiv.classList.add("hidden");
-    updateCalendar(progressData);
+    updateCalendar(data);
   } catch (error) {
     console.error("Error initializing progress:", error);
     loadingDiv.classList.add("hidden");
     // Fallback to empty data
-    updateCalendar({ App: [], points: 0, completed_days: [] });
+    updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
-}
-
-// Set up real-time subscription for progress updates
-function setupRealtimeSubscription() {
-  const subscription = supabase
-    .channel('progress-changes')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'progress',
-      filter: 'user_id=eq.saniya'
-    }, (payload) => {
-      console.log('Real-time update:', payload);
-      if (payload.new) {
-        updateCalendar(payload.new);
-      }
-    })
-    .subscribe();
-
-  return subscription;
 }
 
 // Update Calendar
@@ -206,7 +196,7 @@ function updateCalendar(data) {
     div.textContent = dayNum;
     
     // Check if day is completed
-    if(data.App?.some(p => p.day === dayNum)) {
+    if(data.proofs?.some(p => p.day === dayNum)) {
       div.classList.add("done");
     }
     
@@ -216,7 +206,7 @@ function updateCalendar(data) {
     }
     
     // Lock past missed days and future days
-    if(dayNum < currentDay && !data.App?.some(p => p.day === dayNum)) {
+    if(dayNum < currentDay && !data.proofs?.some(p => p.day === dayNum)) {
       div.classList.add("missed");
     } else if(dayNum > currentDay) {
       div.classList.add("locked");
@@ -225,7 +215,7 @@ function updateCalendar(data) {
     }
     
     // Add click handler only for current day
-    if(dayNum === currentDay && !data.App?.some(p => p.day === dayNum)) {
+    if(dayNum === currentDay && !data.proofs?.some(p => p.day === dayNum)) {
       div.addEventListener("click", () => openTask(i, data));
     } else if(dayNum !== currentDay) {
       div.style.cursor = "not-allowed";
@@ -251,7 +241,7 @@ function openTask(dayIndex, data) {
     return;
   }
   
-  if(data.App?.some(p => p.day === dayNum)) {
+  if(data.proofs?.some(p => p.day === dayNum)) {
     showPopup("✅ You've already completed today's habit!");
     return;
   }
@@ -263,28 +253,37 @@ function openTask(dayIndex, data) {
   markDoneBtn.onclick = () => submitTask(dayIndex, data);
 }
 
-// Upload file to Supabase Storage
-async function uploadFile(file, dayNum) {
-  console.log(file)
+// Upload to Cloudinary
+async function uploadToCloudinary(file, dayNum) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+  formData.append('folder', `habit_tracker/day${dayNum}`);
+  formData.append('resource_type', 'auto'); // Handles both images and videos
   
-  const fileName = `day${dayNum}/${Date.now()}_${file.name}`;
-  
-  console.log(fileName)
-  const { data, error } = await supabase.storage
-    .from('App')
-    .upload(fileName, file);
-
-  if (error) {
-    console.error('Upload error:', error);
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return {
+      url: data.secure_url,
+      publicId: data.public_id,
+      resourceType: data.resource_type
+    };
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
     throw error;
   }
-
-  // Get public URL
-  const { data: urlData } = supabase.storage
-    .from('App')
-    .getPublicUrl(fileName);
-
-  return urlData.publicUrl;
 }
 
 // Submit Task
@@ -302,41 +301,34 @@ async function submitTask(dayIndex, data) {
   markDoneBtn.disabled = true;
   
   try {
-    // Upload file to Supabase Storage
-    const fileUrl = await uploadFile(file, dayNum);
+    // Upload to Cloudinary
+    const uploadResult = await uploadToCloudinary(file, dayNum);
     
     // Update progress data
     let progressData = { ...data };
     
     // Add proof if not already exists
-    if(!progressData.App.some(p => p.day === dayNum)) {
-      progressData.App.push({ 
+    if(!progressData.proofs.some(p => p.day === dayNum)) {
+      progressData.proofs.push({ 
         day: dayNum, 
-        url: fileUrl, 
+        url: uploadResult.url,
+        publicId: uploadResult.publicId,
+        resourceType: uploadResult.resourceType,
         timestamp: new Date().toISOString()
       });
       progressData.points = (progressData.points || 0) + 10;
       
-      if(!progressData.completed_days) {
-        progressData.completed_days = [];
+      if(!progressData.completedDays) {
+        progressData.completedDays = [];
       }
-      progressData.completed_days.push(dayNum);
+      progressData.completedDays.push(dayNum);
     }
     
-    // Update database
-    const { error } = await supabase
-      .from('progress')
-      .update({
-        App: progressData.App,
-        points: progressData.points,
-        completed_days: progressData.completed_days
-      })
-      .eq('user_id', 'saniya');
+    // Save to localStorage
+    saveProgressData(progressData);
     
-    if (error) {
-      console.error("Error updating progress:", error);
-      throw error;
-    }
+    // Update UI
+    updateCalendar(progressData);
     
     // Hide task section
     taskSection.classList.add("hidden");
@@ -355,8 +347,8 @@ async function submitTask(dayIndex, data) {
     }
     
   } catch (error) {
-    console.error("Error saving progress:", error);
-    alert("Failed to save progress. Please try again.");
+    console.error("Error uploading proof:", error);
+    alert("Upload failed. Please check your internet connection and try again.");
     markDoneBtn.textContent = "Mark as Done ✅";
     markDoneBtn.disabled = false;
   }
@@ -369,28 +361,38 @@ function checkWeeklyBonus(dayNum, data) {
   const weekEnd = week * 7;
   
   // Count completed days in this week
-  const weekCompleted = data.App.filter(p => 
+  const weekCompleted = data.proofs.filter(p => 
     p.day >= weekStart && p.day <= weekEnd
   ).length;
   
   if(weekCompleted === 7) {
     const bonus = bonusMessages[week];
     if(bonus) {
-      if(bonus.type === "text") {
-        showPopup(bonus.content);
-      } else if(bonus.type === "audio") {
-        showPopup(`<div style="text-align: center;"><p>🎵 Special Audio Message for You! 🎵</p><audio controls src="${bonus.content}" style="width: 100%; max-width: 300px;"></audio></div>`);
-      } else if(bonus.type === "video") {
-        showPopup(`<div style="text-align: center;"><p>🎬 Special Video Message for You! 🎬</p><video controls style="width: 100%; max-width: 300px;"><source src="${bonus.content}" type="video/mp4"></video></div>`);
-      }
+      showPopup(bonus.content);
     }
   } else {
     showPopup("⚠️ Weekly bonus locked! You missed some habits this week.");
   }
 }
 
+// Auto-save functionality - listen for storage changes from other tabs
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEYS.progress) {
+    const newData = JSON.parse(e.newValue || '{}');
+    updateCalendar(newData);
+  }
+});
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   initializeProgress();
-  setupRealtimeSubscription();
 });
+
+// Export functions for gallery to use
+window.HabitTracker = {
+  getProgressData,
+  saveProgressData,
+  habits,
+  appreciationMessages,
+  STORAGE_KEYS
+};
