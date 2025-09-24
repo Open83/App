@@ -265,8 +265,11 @@ function openTask(dayIndex, data) {
 
 // Upload file to Supabase Storage
 async function uploadFile(file, dayNum) {
+  console.log(file)
+  
   const fileName = `day${dayNum}/${Date.now()}_${file.name}`;
   
+  console.log(fileName)
   const { data, error } = await supabase.storage
     .from('App')
     .upload(fileName, file);
