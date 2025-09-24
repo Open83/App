@@ -1,6 +1,6 @@
 // Cloudinary Config
 const cloudinaryConfig = {
-  cloudName: 'default', // Replace with your cloud name if needed
+  cloudName: 'habit_tracker', // Replace with your cloud name if needed
   apiKey: '219634793157291',
   apiSecret: 'siaDrAtZR5d_B6SAsNZXApkVDsI'
 };
