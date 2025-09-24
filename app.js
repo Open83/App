@@ -139,7 +139,7 @@ async function initializeProgress() {
       // No data found - create initial record
       progressData = { 
         user_id: 'saniya',
-        proofs: [], 
+        App: [], 
         points: 0,
         start_time: new Date().getTime(),
         completed_days: []
@@ -170,7 +170,7 @@ async function initializeProgress() {
     console.error("Error initializing progress:", error);
     loadingDiv.classList.add("hidden");
     // Fallback to empty data
-    updateCalendar({ proofs: [], points: 0, completed_days: [] });
+    updateCalendar({ App: [], points: 0, completed_days: [] });
   }
 }
 
@@ -206,7 +206,7 @@ function updateCalendar(data) {
     div.textContent = dayNum;
     
     // Check if day is completed
-    if(data.proofs?.some(p => p.day === dayNum)) {
+    if(data.App?.some(p => p.day === dayNum)) {
       div.classList.add("done");
     }
     
@@ -216,7 +216,7 @@ function updateCalendar(data) {
     }
     
     // Lock past missed days and future days
-    if(dayNum < currentDay && !data.proofs?.some(p => p.day === dayNum)) {
+    if(dayNum < currentDay && !data.App?.some(p => p.day === dayNum)) {
       div.classList.add("missed");
     } else if(dayNum > currentDay) {
       div.classList.add("locked");
@@ -225,7 +225,7 @@ function updateCalendar(data) {
     }
     
     // Add click handler only for current day
-    if(dayNum === currentDay && !data.proofs?.some(p => p.day === dayNum)) {
+    if(dayNum === currentDay && !data.App?.some(p => p.day === dayNum)) {
       div.addEventListener("click", () => openTask(i, data));
     } else if(dayNum !== currentDay) {
       div.style.cursor = "not-allowed";
@@ -251,7 +251,7 @@ function openTask(dayIndex, data) {
     return;
   }
   
-  if(data.proofs?.some(p => p.day === dayNum)) {
+  if(data.App?.some(p => p.day === dayNum)) {
     showPopup("✅ You've already completed today's habit!");
     return;
   }
@@ -268,7 +268,7 @@ async function uploadFile(file, dayNum) {
   const fileName = `day${dayNum}/${Date.now()}_${file.name}`;
   
   const { data, error } = await supabase.storage
-    .from('proofs')
+    .from('App')
     .upload(fileName, file);
 
   if (error) {
@@ -278,7 +278,7 @@ async function uploadFile(file, dayNum) {
 
   // Get public URL
   const { data: urlData } = supabase.storage
-    .from('proofs')
+    .from('App')
     .getPublicUrl(fileName);
 
   return urlData.publicUrl;
@@ -306,8 +306,8 @@ async function submitTask(dayIndex, data) {
     let progressData = { ...data };
     
     // Add proof if not already exists
-    if(!progressData.proofs.some(p => p.day === dayNum)) {
-      progressData.proofs.push({ 
+    if(!progressData.App.some(p => p.day === dayNum)) {
+      progressData.App.push({ 
         day: dayNum, 
         url: fileUrl, 
         timestamp: new Date().toISOString()
@@ -324,7 +324,7 @@ async function submitTask(dayIndex, data) {
     const { error } = await supabase
       .from('progress')
       .update({
-        proofs: progressData.proofs,
+        App: progressData.App,
         points: progressData.points,
         completed_days: progressData.completed_days
       })
@@ -366,7 +366,7 @@ function checkWeeklyBonus(dayNum, data) {
   const weekEnd = week * 7;
   
   // Count completed days in this week
-  const weekCompleted = data.proofs.filter(p => 
+  const weekCompleted = data.App.filter(p => 
     p.day >= weekStart && p.day <= weekEnd
   ).length;
   
