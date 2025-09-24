@@ -1,339 +1,250 @@
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyBRHExv8tG8UQvPY-TN8hQQNtWLbX1Dl8U",
-  authDomain: "asif-aea0e.firebaseapp.com",
-  projectId: "asif-aea0e",
-  storageBucket: "asif-aea0e.firebasestorage.app",
-  messagingSenderId: "852407491441",
-  appId: "1:852407491441:web:448918c78ed2b62c2ef4d0",
-  measurementId: "G-HKQR6NH2HB"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
+// ================================
+// Supabase Config
+// ================================
+const SUPABASE_URL = "https://jvjbwpmgktkxsndtqydc.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2amJ3cG1na3RreHNuZHRxeWRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MDQxNzMsImV4cCI6MjA3NDI4MDE3M30.kDM9B1BlogBqfKabyc9B5gi6DObcIrVBOwaTH6AX4IE";
 
-// --- 30-Day Habits ---
-const habits = [
-  "Drink 6–8 glasses of water 💧",
-  "Smile in the mirror for 1 minute 😊", 
-  "Listen to your favorite song 🎶",
-  "Write one thing you love about yourself ✍️",
-  "Take a 10 min walk/stretch 🚶‍♀️",
-  "Send a heart emoji ❤️ to someone special",
-  "Meditate for 5 minutes 🧘‍♀️",
-  "Compliment yourself in mirror 💖",
-  "Read a motivational quote 📖",
-  "Drink a healthy smoothie 🥤",
-  "Do a 5-minute dance session 💃",
-  "Write down 3 things you're grateful for 🙏",
-  "Draw or doodle something fun 🎨",
-  "Take 10 deep breaths 🌬️",
-  "Text a friend you love 💌",
-  "Make your bed neatly 🛏️",
-  "Try a new healthy snack 🍎",
-  "Watch a short funny video 😂",
-  "Plan your next day 📝",
-  "Give yourself a small treat 🍫",
-  "Do a 5-min stretch or yoga 🧘",
-  "Sing your favorite song aloud 🎤",
-  "Take 5 min to relax with eyes closed 🌸",
-  "Write down a happy memory 💌",
-  "Say 'I love you' to yourself 💖",
-  "Organize your desk or room 🧹",
-  "Drink a cup of herbal tea 🍵",
-  "Compliment someone today 🌹",
-  "Write a short poem or note ✍️",
-  "Reflect on your week & smile 😊"
-];
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- 30-Day Appreciation Messages ---
-const appreciationMessages = [
-  "Day 1: You're amazing, keep shining! 🌸",
-  "Day 2: Keep spreading your beautiful light! 🌟", 
-  "Day 3: Today was beautiful because of you 🌹",
-  "Day 4: You're my sunshine, always! ☀️",
-  "Day 5: Your smile makes my day brighter! 😍",
-  "Day 6: You're absolutely incredible 💖",
-  "Day 7: First week done! You rock! 💝",
-  "Day 8: Another beautiful day with you! 💖",
-  "Day 9: Your energy is so infectious! ⚡",
-  "Day 10: You're doing amazing, love! 💖",
-  "Day 11: You're glowing today! ✨",
-  "Day 12: Another step forward, proud of you! 💖",
-  "Day 13: Your positivity is amazing! 💌",
-  "Day 14: Two weeks of awesomeness! 💝",
-  "Day 15: Halfway through the month! 💖",
-  "Day 16: Keep being fabulous, queen! 🌹",
-  "Day 17: You're absolutely amazing! 💖",
-  "Day 18: You did it again! So proud! 👏",
-  "Day 19: You're a bright shining star! ✨",
-  "Day 20: You absolutely rock! 💝",
-  "Day 21: Three weeks done! Champion! 🎉",
-  "Day 22: Keep shining bright, love! 💖",
-  "Day 23: You're truly incredible! 💌",
-  "Day 24: Almost there, keep going! 🌹",
-  "Day 25: Stay awesome, beautiful! 💌",
-  "Day 26: Keep shining so bright! ✨",
-  "Day 27: Almost at the finish line! 🌟",
-  "Day 28: Last few days, you're amazing! 💝",
-  "Day 29: Almost there, my love! 🌹",
-  "Day 30: Month complete! You're my queen! 🎉"
-];
+// Hardcoded user (since no auth)
+const userId = "default_user";
 
-// --- Weekly bonus messages ---
-const bonusMessages = {
-  1: { type:"text", content:"💝 First week done! I love you infinitely, meri jaan!" },
-  2: { type:"audio", content:"bonus/week2.mp3" },
-  3: { type:"video", content:"bonus/week3.mp4" },
-  4: { type:"text", content:"🌹 You're my eternal queen. Forever proud of you!" }
-};
-
-// --- Elements ---
+// ================================
+// DOM Elements
+// ================================
 const calendar = document.getElementById("calendar");
 const taskSection = document.getElementById("task-section");
 const taskTitle = document.getElementById("task-title");
 const taskDesc = document.getElementById("task-desc");
-const markDoneBtn = document.getElementById("mark-done");
 const proofUpload = document.getElementById("proof-upload");
-const pointsDisplay = document.getElementById("points");
-const progressFill = document.getElementById("progress-fill");
-const progressText = document.getElementById("progress-text");
-const loadingDiv = document.getElementById("loading");
+const completeBtn = document.getElementById("complete-btn");
+const pointsEl = document.getElementById("points");
+const badgesEl = document.getElementById("badges");
 
-// Show loading initially
-loadingDiv.classList.remove("hidden");
+const popup = document.getElementById("popup");
+const popupContent = document.getElementById("popup-content");
+const popupClose = document.querySelector(".popup-close");
 
-// Popup
-function showPopup(content){
-  const popup = document.getElementById("popup");
-  const popupContent = document.getElementById("popup-content");
-  popupContent.innerHTML = content;
-  popup.classList.remove("hidden");
-  popupContent.classList.add("fade-in");
-}
-document.getElementById("close-popup").addEventListener("click", ()=>{
-  document.getElementById("popup").classList.add("hidden");
-});
+// ================================
+// Habit & Messages Arrays
+// ================================
+const habits = [
+  "Meditate for 10 minutes",
+  "Drink 8 glasses of water",
+  "Read 10 pages of a book",
+  "Exercise for 30 minutes",
+  "Write 3 things you’re grateful for",
+  "Avoid social media for 2 hours",
+  "Eat a healthy breakfast",
+  "Practice deep breathing",
+  "Take a 20-minute walk",
+  "Call a loved one",
+  "Sleep before 11 PM",
+  "Do 20 push-ups",
+  "Plan tomorrow’s tasks",
+  "Listen to calming music",
+  "Stretch for 15 minutes",
+  "Write in your journal",
+  "Declutter one small area",
+  "Cook a healthy meal",
+  "Limit screen time",
+  "Practice positive affirmations",
+  "Drink green tea",
+  "Review your goals",
+  "Spend time in nature",
+  "Do a random act of kindness",
+  "Take a cold shower",
+  "Practice mindfulness",
+  "Limit sugar intake",
+  "Write down your dreams",
+  "Avoid junk food",
+  "Reflect on your day"
+];
 
-// Calculate current day based on start time
-function getCurrentDay() {
-  const startTime = localStorage.getItem('habitStartTime');
-  if (!startTime) {
-    // First time user - set start time
-    const now = new Date().getTime();
-    localStorage.setItem('habitStartTime', now);
-    return 1;
+const appreciationMessages = [
+  "Proud of you for starting your journey! 🌸",
+  "Keep going, you’re glowing! ✨",
+  "You’re unstoppable! 💪",
+  "Day by day, you’re becoming your best self 🌟",
+  "Small steps lead to big changes ❤️",
+  "Your dedication inspires me 💕",
+  "Consistency is your superpower ⚡",
+  "Look at you go! 🚀",
+  "You’re shining brighter each day 🌞",
+  "Proud moment alert! 🎉",
+  "Keep up the amazing work 🌈",
+  "Discipline is your new best friend 🤝",
+  "Stay strong, you’re doing amazing 💖",
+  "Growth looks good on you 🌿",
+  "You’re proving yourself every day 🌹",
+  "Love the effort you’re putting in 💎",
+  "Proud of your resilience 🦋",
+  "Keep creating magic ✨",
+  "You’re unstoppable 🔥",
+  "Progress, not perfection 🌼",
+  "Keep showing up for yourself 🌸",
+  "I’m so proud of you ❤️",
+  "You’re glowing differently 🌟",
+  "Keep chasing your best self 🌈",
+  "Strong mind, strong body 💪",
+  "Every effort counts 💖",
+  "The new you is inspiring 🌿",
+  "Your dedication = wow 😍",
+  "You’re smashing it! 🔥",
+  "Love your journey so far 🌸"
+];
+
+// ================================
+// User Progress Data
+// ================================
+let progressData = {
+  points: 0,
+  completedDays: [],
+  proofs: [],
+  badges: [],
+  weeklyBonuses: []
+};
+
+// ================================
+// Database Functions
+// ================================
+
+// Load user progress
+async function loadProgress() {
+  const { data, error } = await supabase
+    .from("users")
+    .select("progress")
+    .eq("id", userId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("Error loading progress:", error);
+    return;
   }
-  
-  const start = parseInt(startTime);
-  const now = new Date().getTime();
-  const daysPassed = Math.floor((now - start) / (24 * 60 * 60 * 1000)) + 1;
-  return Math.min(daysPassed, 30); // Max 30 days
+
+  if (data && data.progress) {
+    progressData = data.progress;
+  } else {
+    // Insert new row if not exists
+    await supabase.from("users").insert([{ id: userId, progress: progressData }]);
+  }
+
+  updateUI();
 }
 
-// Initialize or load progress data
-async function initializeProgress() {
-  try {
-    const doc = await db.collection("progress").doc("saniya").get();
-    let data;
-    
-    if (!doc.exists) {
-      // First time - create initial data
-      data = { 
-        proofs: [], 
-        points: 0,
-        startTime: new Date().getTime(),
-        completedDays: []
-      };
-      await db.collection("progress").doc("saniya").set(data);
-    } else {
-      data = doc.data();
-      // Sync localStorage with Firebase start time
-      if (data.startTime) {
-        localStorage.setItem('habitStartTime', data.startTime.toString());
-      }
-    }
-    
-    loadingDiv.classList.add("hidden");
-    updateCalendar(data);
-  } catch (error) {
-    console.error("Error initializing progress:", error);
-    loadingDiv.classList.add("hidden");
-    // Fallback to empty data
-    updateCalendar({ proofs: [], points: 0, completedDays: [] });
-  }
+// Save user progress
+async function saveProgress() {
+  const { error } = await supabase
+    .from("users")
+    .update({ progress: progressData })
+    .eq("id", userId);
+
+  if (error) console.error("Error saving progress:", error);
 }
 
-// Load Progress with real-time updates
-db.collection("progress").doc("saniya").onSnapshot(doc => {
-  if (doc.exists) {
-    const data = doc.data();
-    updateCalendar(data);
-  }
-});
-
-// Update Calendar
-function updateCalendar(data) {
-  const currentDay = getCurrentDay();
+// ================================
+// Calendar UI
+// ================================
+function renderCalendar() {
   calendar.innerHTML = "";
-  
-  for(let i = 0; i < 30; i++) {
-    const dayNum = i + 1;
-    const div = document.createElement("div");
-    div.className = "day";
-    div.textContent = dayNum;
-    
-    // Check if day is completed
-    if(data.proofs?.some(p => p.day === dayNum)) {
-      div.classList.add("done");
+
+  for (let i = 1; i <= 30; i++) {
+    const dayEl = document.createElement("div");
+    dayEl.classList.add("day");
+    dayEl.textContent = i;
+
+    if (progressData.completedDays.includes(i)) {
+      dayEl.classList.add("completed");
     }
-    
-    // Mark weekly bonus days
-    if(dayNum % 7 === 0) {
-      div.classList.add("bonus");
-    }
-    
-    // Lock past missed days and future days
-    if(dayNum < currentDay && !data.proofs?.some(p => p.day === dayNum)) {
-      div.classList.add("missed");
-    } else if(dayNum > currentDay) {
-      div.classList.add("locked");
-    } else if(dayNum === currentDay) {
-      div.classList.add("current");
-    }
-    
-    // Add click handler only for current day
-    if(dayNum === currentDay && !data.proofs?.some(p => p.day === dayNum)) {
-      div.addEventListener("click", () => openTask(i, data));
-    } else if(dayNum !== currentDay) {
-      div.style.cursor = "not-allowed";
-    }
-    
-    calendar.appendChild(div);
+
+    dayEl.addEventListener("click", () => openTask(i));
+    calendar.appendChild(dayEl);
   }
-  
-  // Update points and progress
-  pointsDisplay.textContent = data.points || 0;
-  const progress = ((data.points || 0) / 300 * 100).toFixed(0);
-  progressFill.style.width = progress + "%";
-  progressText.textContent = progress + "%";
 }
 
-// Open Task
-function openTask(dayIndex, data) {
-  const dayNum = dayIndex + 1;
-  const currentDay = getCurrentDay();
-  
-  if(dayNum !== currentDay) {
-    showPopup("🚫 You can only complete today's habit!");
-    return;
-  }
-  
-  if(data.proofs?.some(p => p.day === dayNum)) {
-    showPopup("✅ You've already completed today's habit!");
-    return;
-  }
-  
+// ================================
+// Task Functions
+// ================================
+let currentDay = null;
+let currentFile = null;
+
+function openTask(dayNum) {
+  currentDay = dayNum;
   taskSection.classList.remove("hidden");
   taskTitle.textContent = `Day ${dayNum} Habit`;
-  taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
-  
-  markDoneBtn.onclick = () => submitTask(dayIndex, data);
+  taskDesc.innerHTML = `<strong>${habits[dayNum - 1]}</strong><br><br><em>${appreciationMessages[dayNum - 1]}</em>`;
 }
 
-// Submit Task
-function submitTask(dayIndex, data) {
-  const file = proofUpload.files[0];
-  if(!file) {
-    alert("Please upload proof to complete the habit!");
+proofUpload.addEventListener("change", (e) => {
+  currentFile = e.target.files[0];
+});
+
+completeBtn.addEventListener("click", async () => {
+  if (!currentDay || !currentFile) {
+    alert("Please select a proof file first.");
     return;
   }
-  
-  const dayNum = dayIndex + 1;
-  const storageRef = storage.ref(`proofs/day${dayNum}/${Date.now()}_${file.name}`);
-  
-  // Show uploading message
-  markDoneBtn.textContent = "Uploading... ⏳";
-  markDoneBtn.disabled = true;
-  
-  const uploadTask = storageRef.put(file);
 
-  uploadTask.on("state_changed", null, error => {
-    console.error("Upload error:", error);
-    alert("Upload failed. Please try again.");
-    markDoneBtn.textContent = "Mark as Done ✅";
-    markDoneBtn.disabled = false;
-  }, async () => {
-    try {
-      const url = await storageRef.getDownloadURL();
-      let progressData = { ...data };
-      
-      // Add proof if not already exists
-      if(!progressData.proofs.some(p => p.day === dayNum)) {
-        progressData.proofs.push({ day: dayNum, url, timestamp: new Date() });
-        progressData.points = (progressData.points || 0) + 10;
-        
-        if(!progressData.completedDays) {
-          progressData.completedDays = [];
-        }
-        progressData.completedDays.push(dayNum);
-      }
-      
-      await db.collection("progress").doc("saniya").set(progressData);
-      
-      // Hide task section
-      taskSection.classList.add("hidden");
-      proofUpload.value = "";
-      markDoneBtn.textContent = "Mark as Done ✅";
-      markDoneBtn.disabled = false;
-      
-      // Show appreciation message
-      showPopup(appreciationMessages[dayIndex]);
-      
-      // Check for weekly bonus
-      if(dayNum % 7 === 0) {
-        setTimeout(() => {
-          checkWeeklyBonus(dayNum, progressData);
-        }, 2000);
-      }
-      
-    } catch (error) {
-      console.error("Error saving progress:", error);
-      alert("Failed to save progress. Please try again.");
-      markDoneBtn.textContent = "Mark as Done ✅";
-      markDoneBtn.disabled = false;
-    }
+  // Upload file to Supabase Storage
+  const filePath = `${userId}/day-${currentDay}-${Date.now()}-${currentFile.name}`;
+  const { error: uploadError } = await supabase.storage
+    .from("proofs")
+    .upload(filePath, currentFile);
+
+  if (uploadError) {
+    console.error("Upload error:", uploadError);
+    alert("Failed to upload file.");
+    return;
+  }
+
+  // Get public URL
+  const { data: publicUrlData } = supabase.storage.from("proofs").getPublicUrl(filePath);
+  const url = publicUrlData.publicUrl;
+
+  // Update progress
+  progressData.completedDays.push(currentDay);
+  progressData.points += 10;
+  progressData.proofs.push({ day: currentDay, url, timestamp: new Date().toISOString() });
+
+  saveProgress();
+  updateUI();
+
+  alert("Task completed! 🎉");
+  taskSection.classList.add("hidden");
+  proofUpload.value = "";
+  currentFile = null;
+});
+
+// ================================
+// UI Update
+// ================================
+function updateUI() {
+  renderCalendar();
+  pointsEl.textContent = progressData.points;
+
+  badgesEl.innerHTML = "";
+  progressData.badges.forEach((b) => {
+    const badge = document.createElement("div");
+    badge.classList.add("badge");
+    badge.textContent = b;
+    badgesEl.appendChild(badge);
   });
 }
 
-// Check Weekly Bonus
-function checkWeeklyBonus(dayNum, data) {
-  const week = Math.floor((dayNum - 1) / 7) + 1;
-  const weekStart = (week - 1) * 7 + 1;
-  const weekEnd = week * 7;
-  
-  // Count completed days in this week
-  const weekCompleted = data.proofs.filter(p => 
-    p.day >= weekStart && p.day <= weekEnd
-  ).length;
-  
-  if(weekCompleted === 7) {
-    const bonus = bonusMessages[week];
-    if(bonus) {
-      if(bonus.type === "text") {
-        showPopup(bonus.content);
-      } else if(bonus.type === "audio") {
-        showPopup(`<div style="text-align: center;"><p>🎵 Special Audio Message for You! 🎵</p><audio controls src="${bonus.content}" style="width: 100%; max-width: 300px;"></audio></div>`);
-      } else if(bonus.type === "video") {
-        showPopup(`<div style="text-align: center;"><p>🎬 Special Video Message for You! 🎬</p><video controls style="width: 100%; max-width: 300px;"><source src="${bonus.content}" type="video/mp4"></video></div>`);
-      }
-    }
-  } else {
-    showPopup("⚠️ Weekly bonus locked! You missed some habits this week.");
-  }
+// ================================
+// Popup
+// ================================
+function showPopup(content) {
+  popupContent.innerHTML = content;
+  popup.classList.remove("hidden");
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', () => {
-  initializeProgress();
+popupClose.addEventListener("click", () => {
+  popup.classList.add("hidden");
 });
+
+// ================================
+// Init
+// ================================
+loadProgress();
