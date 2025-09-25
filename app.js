@@ -245,15 +245,7 @@ function openTask(dayIndex, data) {
   markDoneBtn.onclick = () => submitTask(dayIndex, data);
 }
 
-// Generate Cloudinary signature
-function generateSignature(timestamp, folder) {
-  // This is a simplified signature generation - in production, this should be done server-side
-  const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
-  const signature = CryptoJS.SHA1(paramsToSign + cloudinaryConfig.apiSecret).toString();
-  return signature;
-}
-
-// Submit Task with real Cloudinary upload
+// Submit Task using Cloudinary Upload Widget
 function submitTask(dayIndex, data) {
   const file = proofUpload.files[0];
   if(!file) {
@@ -267,78 +259,93 @@ function submitTask(dayIndex, data) {
   markDoneBtn.textContent = "Uploading... ⏳";
   markDoneBtn.disabled = true;
   
-  // Create FormData for Cloudinary upload
-  const formData = new FormData();
-  const timestamp = Math.round(new Date().getTime() / 1000);
-  const folder = `proofs/day${dayNum}`;
-  
-  formData.append('file', file);
-  formData.append('api_key', cloudinaryConfig.apiKey);
-  formData.append('timestamp', timestamp);
-  formData.append('folder', folder);
-  formData.append('upload_preset', 'ml_default'); // Using default unsigned preset
-  
-  // Upload to Cloudinary
-  fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/auto/upload`, {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(result => {
-    console.log('Upload successful:', result);
-    
-    let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
-    
-    // Add proof if not already exists
-    if(!progressData.proofs.some(p => p.day === dayNum)) {
-      progressData.proofs.push({ 
-        day: dayNum, 
-        url: result.secure_url, // Use the actual Cloudinary URL
-        timestamp: new Date(),
-        public_id: result.public_id
-      });
-      progressData.points = (progressData.points || 0) + 10;
-      
-      if(!progressData.completedDays) {
-        progressData.completedDays = [];
+  // Create upload widget
+  const widget = cloudinary.createUploadWidget({
+    cloudName: cloudinaryConfig.cloudName,
+    uploadPreset: 'ml_default', // You need to create this preset in your Cloudinary dashboard
+    folder: `proofs/day${dayNum}`,
+    sources: ['local'],
+    multiple: false,
+    maxFiles: 1,
+    resourceType: 'auto',
+    clientAllowedFormats: ['image', 'video'],
+    maxFileSize: 10000000, // 10MB
+    cropping: false,
+    showAdvancedOptions: false,
+    showInsecurePreview: false,
+    styles: {
+      palette: {
+        window: "#FFFFFF",
+        windowBorder: "#ff99aa",
+        tabIcon: "#ff99aa",
+        menuIcons: "#ff99aa",
+        textDark: "#000000",
+        textLight: "#FFFFFF",
+        link: "#ff99aa",
+        action: "#ff99aa",
+        inactiveTabIcon: "#cccccc",
+        error: "#F44235",
+        inProgress: "#ff99aa",
+        complete: "#4caf50",
+        sourceBg: "#FFFFFF"
       }
-      progressData.completedDays.push(dayNum);
+    }
+  }, (error, result) => {
+    if (error) {
+      console.error('Upload error:', error);
+      alert("Failed to upload image. Please try again.");
+      markDoneBtn.textContent = "Mark as Done ✅";
+      markDoneBtn.disabled = false;
+      return;
     }
     
-    // Save to local storage
-    localDB.setItem("progress_saniya", progressData);
-    
-    // Update UI
-    updateCalendar(progressData);
-    
-    // Hide task section
-    taskSection.classList.add("hidden");
-    proofUpload.value = "";
-    markDoneBtn.textContent = "Mark as Done ✅";
-    markDoneBtn.disabled = false;
-    
-    // Show appreciation message
-    showPopup(appreciationMessages[dayIndex]);
-    
-    // Check for weekly bonus
-    if(dayNum % 7 === 0) {
-      setTimeout(() => {
-        checkWeeklyBonus(dayNum, progressData);
-      }, 2000);
+    if (result && result.event === 'success') {
+      console.log('Upload successful:', result.info);
+      
+      let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+      
+      // Add proof if not already exists
+      if(!progressData.proofs.some(p => p.day === dayNum)) {
+        progressData.proofs.push({ 
+          day: dayNum, 
+          url: result.info.secure_url,
+          timestamp: new Date(),
+          public_id: result.info.public_id
+        });
+        progressData.points = (progressData.points || 0) + 10;
+        
+        if(!progressData.completedDays) {
+          progressData.completedDays = [];
+        }
+        progressData.completedDays.push(dayNum);
+      }
+      
+      // Save to local storage
+      localDB.setItem("progress_saniya", progressData);
+      
+      // Update UI
+      updateCalendar(progressData);
+      
+      // Hide task section
+      taskSection.classList.add("hidden");
+      proofUpload.value = "";
+      markDoneBtn.textContent = "Mark as Done ✅";
+      markDoneBtn.disabled = false;
+      
+      // Show appreciation message
+      showPopup(appreciationMessages[dayIndex]);
+      
+      // Check for weekly bonus
+      if(dayNum % 7 === 0) {
+        setTimeout(() => {
+          checkWeeklyBonus(dayNum, progressData);
+        }, 2000);
+      }
     }
-    
-  })
-  .catch(error => {
-    console.error("Upload failed:", error);
-    alert("Failed to upload image. Please check your internet connection and try again.");
-    markDoneBtn.textContent = "Mark as Done ✅";
-    markDoneBtn.disabled = false;
   });
+  
+  // Open the widget
+  widget.open();
 }
 
 // Check Weekly Bonus
