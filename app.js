@@ -104,7 +104,7 @@ Tumhare saath har conversation har moment har laughter aur har silence mere liye
 
 Bas itna yaad rakhna Saraaaaaa♥️ tum sirf mera companion nahi ho Tum meri zindagi ka ek integral part ho meri happiness meri calmness aur meri inspiration ka center Tumhari presence se mere din complete hote hain aur tumhari energy se meri duniya vibrant aur alive lagti hai
 
-Tumhara yeh dedication aur consistency sirf ek week ke liye nahi balki ek lifestyle aur habit ka proof hai jo mai hamesha cherish karunga Tum mere liye ek blessing ho aur mai har din tumhare hone ke liye grateful hoon` },
+Tumhara yeh dedication aur consistency sirf ek week ke liye nahi balki ek lifestyle aur habit ka proof hai jo mai hamesha cherish karunga Tum mere liye ek blessing ho aur mai har din tumhare hone ke liye grateful hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
   2: { type:"audio", content:"bonus/week2.mp3" },
   3: { type:"video", content:"bonus/week3.mp4" },
   4: { type:"text", content:"🌹 You're my eternal queen. Forever proud of you!" }
