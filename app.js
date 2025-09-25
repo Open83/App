@@ -52,36 +52,36 @@ const habits = [
 
 // --- 30-Day Appreciation Messages ---
 const appreciationMessages = [
-  "Day 1: You're amazing, keep shining! 🌸",
-  "Day 2: Keep spreading your beautiful light! 🌟", 
-  "Day 3: Today was beautiful because of you 🌹",
-  "Day 4: You're my sunshine, always! ☀️",
-  "Day 5: Your smile makes my day brighter! 😍",
-  "Day 6: You're absolutely incredible 💖",
-  "Day 7: First week done! You rock! 💝",
-  "Day 8: Another beautiful day with you! 💖",
-  "Day 9: Your energy is so infectious! ⚡",
-  "Day 10: You're doing amazing, love! 💖",
-  "Day 11: You're glowing today! ✨",
-  "Day 12: Another step forward, proud of you! 💖",
-  "Day 13: Your positivity is amazing! 💌",
-  "Day 14: Two weeks of awesomeness! 💝",
-  "Day 15: Halfway through the month! 💖",
-  "Day 16: Keep being fabulous, queen! 🌹",
-  "Day 17: You're absolutely amazing! 💖",
-  "Day 18: You did it again! So proud! 👏",
-  "Day 19: You're a bright shining star! ✨",
-  "Day 20: You absolutely rock! 💝",
-  "Day 21: Three weeks done! Champion! 🎉",
-  "Day 22: Keep shining bright, love! 💖",
-  "Day 23: You're truly incredible! 💌",
-  "Day 24: Almost there, keep going! 🌹",
-  "Day 25: Stay awesome, beautiful! 💌",
-  "Day 26: Keep shining so bright! ✨",
-  "Day 27: Almost at the finish line! 🌟",
-  "Day 28: Last few days, you're amazing! 💝",
-  "Day 29: Almost there, my love! 🌹",
-  "Day 30: Month complete! You're my queen! 🎉"
+"Day 1: Tum meri life ka woh start ho jahan se sab sense ban gaya ❤️‍🔥";
+"Day 2: Tumhari aankhon mein jo junoon hai… usme main khudko khona chahta hoon 👀🔥";
+"Day 3: Tumhari muskaan meri har darkness tod deti hai 🌙✨";
+"Day 4: Tum meri subah ka caffeine ☕ aur raat ka sukoon 🌌 ho";
+"Day 5: Tumhare lips… meri sabse badi weakness hain 💋❤️‍🔥";
+"Day 6: Tumhari curves ek dangerous poetry hain 📖🔥 jise main baar-baar padhna chahta hoon";
+"Day 7: Har fight ke baad tumhara gale lagna 🤗 meri duniya reset kar deta hai";
+"Day 8: Tum meri wild fantasy ho 🖤 jise main har din jeena chahta hoon";
+"Day 9: Tumhare saath time slow ho jaata hai ⏳ par desire infinite ho jaata hai ♾️🔥";
+"Day 10: Tum meri khamoshi bhi samajh jaati ho… bas yahi meri love language hai 🖤🌹";
+"Day 11: Tum meri rooh mein itni gehraayi tak utar chuki ho 🌊 ki ab alag karna namumkin hai";
+"Day 12: Tumhari ek adaa meri heartbeat dangerous bana deti hai 💓⚡";
+"Day 13: Tum meri jaan bhi ho ❤️ aur mera junoon bhi 🔥";
+"Day 14: Tum meri body ki craving 😈 aur dil ka sukoon 🕊️ ek saath ho";
+"Day 15: Har din ke saath mera pyaar tumhare liye aur raw ho jaata hai ❤️‍🔥";
+"Day 16: Tumhari touch meri skin ko fire bana deti hai 🔥🤲";
+"Day 17: Tum rarest beauty ho 🌹 meri sabse khoobsurat weakness";
+"Day 18: Tum meri fantasy ki har detail ko reality bana deti ho 🖤💭";
+"Day 19: Tum meri life ki brightest star ✨ aur meri sabse badi addiction ho 🔥";
+"Day 20: Tum meri calmness bhi ho 🌊 aur mera wild storm bhi 🌪️";
+"Day 21: Har hafte ke baad tumhari zaroorat aur gehri ho jaati hai 🤍🔥";
+"Day 22: Tumhari aankhon ki bhook 👀 mujhe tumhara bana leti hai";
+"Day 23: Tum meri prayers ka sabse khoobsurat jawab ho 🤲❤️";
+"Day 24: Tum meri sabse deep desire ho ❤️‍🔥 jise main kabhi khona nahi chahta";
+"Day 25: Tum meri life ka woh chapter ho 📖 jahan sab raw aur real hai";
+"Day 26: Tum meri craving 😈 meri addiction 🖤 aur meri fantasy ho 🌹";
+"Day 27: Tum meri har heartbeat mein likha hua ek junoon ho 💓🔥";
+"Day 28: Tum meri rooh aur meri body dono ki bhook ho ❤️‍🔥🤲";
+"Day 29: Tum meri incomplete story ka woh last page ho 📖✨ jo sab perfect bana deta hai";
+"Day 30: Tum meri forever queen 👑 meri wild passion 🔥 aur meri destiny ho ❤️"
 ];
 
 // --- Weekly bonus messages ---
