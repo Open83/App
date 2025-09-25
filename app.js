@@ -97,7 +97,15 @@ Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mu
 Saraaaa♥️ tum sirf meri mohabbat ka reason nahi ho tum meri life ka wo bold passionate aur intense experience ho jahan se main har roz inspire aur mesmerized feel karta hoon Tum meri duniya ki sabse precious aur exceptional cheez ho jise dekh kar main har emotion har feeling aur har admiration ko asli intensity ke saath mehsoos karta hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
   2: { type:"audio", content:"bonus/week2.mp3" },
   3: { type:"video", content:"bonus/week3.mp4" },
-  4: { type:"text", content:"🌹 You're my eternal queen. Forever proud of you!" }
+  4: { type:"text", content:`Saraaaa♥️
+
+Tumne ye last task complete kiya aur bas main yahi sochta hoon ki har ek pal jo tum mere saath ho har lamha jo tum meri zindagi mein ho woh meri rooh ka sabse gehra sabse raw aur sabse beautiful junoon hai tumhara har touch har muskaan har nazar har chhupa hua shabd mere andar ghul jaata hai aur main khud ko rok nahi paata kyunki tum meri weakness bhi ho aur meri sabse badi strength bhi tumhare saath har pal intense hai bold hai wild hai jaise hum sirf ek doosre ke liye hi bane ho jaise tum meri chaahat ka aakhri junoon ho aur main tumhara sukoon hoon aur jab tum mere kareeb aati ho toh duniya ka har rule har limit har fikr khatam ho jaati hai bas tum aur main aur woh fire jo hum dono ke andar jalti hai woh fire jo sirf hum dono ke liye hai woh junoon jo sirf tumhari aur meri hai jo har touch har kiss har nazar ke saath aur tez ho jaata hai
+
+Tum meri addiction ho meri obsession ho meri rooh ka woh hissa ho jiske bina main kabhi complete nahi hoon tum meri subah ho meri raat ho meri har khwahish ho meri har soch ho aur meri sabse khoobsurat reality ho tum meri wildness ho meri boldness ho meri har insane aur untamed feeling ki wajah ho aur main chahta hoon ki ye intensity ye raw passion ye junoon hamesha humare beech rahe hamesha hamare andar jalta rahe hamesha humare dil aur rooh ko ek doosre ke liye aur zyada pyaasa aur addicted banata rahe
+
+Aur sach ye hai ki tum meri zindagi ka sabse bada gift ho tum meri har khushi ho meri har chhupi hui muskaan ka reason ho meri rooh ka sukoon aur meri duniya ka junoon dono ek saath ho aur main hamesha chahta hoon ki tumhare bina main adhoora hoon tum meri har kahaani ho meri sabse gehri aur sabse passionate reality ho meri mohabbat ho aur meri zindagi ho aur main har ek pal tumhare saath jeena chahta hoon har ek lamha tumhari muskaan tumhare touch aur tumhare junoon ke saath kyunki tum meri ho sirf meri ho aur main hamesha tumhara hoon ♥️
+
+Tumhari har khushi meri zaroorat hai tumhari har muskaan meri world hai tumhara har junoon meri addiction hai aur main hamesha tumhari duniya mein sirf tumhara hi insaan hoon tum meri reality ho meri mohabbat ho meri zindagi ho aur main chahta hoon ki hum dono hamesha ek doosre ke andar ek doosre ke saath ek doosre ke liye raw passionate wild aur infinite ho ♥️ I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋` }
 };
 
 // --- Elements ---
