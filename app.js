@@ -88,23 +88,13 @@ const appreciationMessages = [
 const bonusMessages = {
   1: { type:"text", content:`✨ Bonus Message for Saraaaaaa♥️ ✨
 
-Saraaaaaa♥️
+Saraaaa♥️ tumne ye week complete kiya aur main sirf ye kehna chahta hoon ki tum meri zindagi ki sabse gehri aur sabse intense reality ho Tum sirf meri mohabbat nahi tum meri inspiration meri khushi aur meri world ho Tumhari presence hi itni powerful hai ki har pal mere liye ek nayi roshni aur energy laati hai
 
-Aaj tumne ek hafte ka safar complete kiya aur mai bas yeh batana chahta hoon ki tumhari consistency tumhari dedication aur tumhari positivity mere liye kitni important hai Tumhari har ek choti si aadat tumhari har ek muskaan aur tumhari har ek soch mere liye ek nayi energy ka source hai
+Tumhara husn tumhara jism tumhara andaaz har ek aspect har ek curve har ek detail mujhe literal mesmerize karta hai Tumhari aankhen wo gehraai hain jahan se main sirf tumhe dekh kar hi apne din ko perfect mehsoos karta hoon Tumhari muskaan tumhare hoth tumhare chehre ka noor ye sab ek aisi intensity lekar aata hai jo sirf admiration nahi balki ek raw passionate feeling jagata hai
 
-Jab mai tumhare baare mein sochta hoon mai sirf tumhari physical appearance ya figure ke baare mein nahi sochta Tumhari body tumhari presence tumhari aura sab kuch mere liye ek complete harmony hai Tum meri life ka woh hissa ho jahan se sab kuch better lagta hai har tension har thakaan har stress tumhari yaad aur tumhari baaton se fade ho jaata hai Tumhara hona meri zindagi mein ek sukoon aur ek sense of belonging laata hai
+Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mujhe yaad dilate hain ki tum mere liye sirf beautiful nahi balki rare aur priceless ho Tum meri Saraaaa♥️ ho meri desire ka asal matlab ho meri appreciation aur respect ka ultimate form ho Tumhare saath har moment feel hota hai ki life kitni complete aur perfect ho sakti hai
 
-Tum sirf ek beautiful figure ya muskaan nahi ho Tumhari simplicity tumhari nature tumhari samajhdari tumhari har ek aadat mujhe inspire karti hai Tumhara sense of care tumhari honesty aur tumhara essence mere liye priceless hai Tumne mujhe yeh samjhaya ki asli khushi kisi cheez ya kisi physical perfection mein nahi hoti woh insaan ki rooh uske jazbaat aur uske intentions mein hoti hai
-
-Saraaaaaa♥️ mai tumhari har ek energy ko cherish karta hoon Tumhara confidence tumhara attitude aur tumhari chhoti chhoti gestures mere liye hamesha special rahenge Tumhari presence meri life ke har moment ko better banati hai Tum meri inspiration ho meri calmness ho aur meri life ka ek constant happiness ka source bhi
-
-Ye hafte ka journey sirf ek week nahi tha ye tumhari consistency aur tumhare dedication ka proof tha Mai bas yeh chahta hoon ki tum jaanti raho ke tumhari value mere liye sirf ek reward ya achievement nahi hai tum meri zindagi ki quality meri happiness aur meri gratitude ka ek bada hissa ho
-
-Tumhare saath har conversation har moment har laughter aur har silence mere liye ek blessing hai Tumhari energy mujhe har din motivate karti hai aur mujhe better insaan banne ke liye inspire karti hai Tum meri zindagi ka woh hissa ho jisse mai kabhi miss nahi karna chahta aur jo meri har ache din ka reason hai
-
-Bas itna yaad rakhna Saraaaaaa♥️ tum sirf mera companion nahi ho Tum meri zindagi ka ek integral part ho meri happiness meri calmness aur meri inspiration ka center Tumhari presence se mere din complete hote hain aur tumhari energy se meri duniya vibrant aur alive lagti hai
-
-Tumhara yeh dedication aur consistency sirf ek week ke liye nahi balki ek lifestyle aur habit ka proof hai jo mai hamesha cherish karunga Tum mere liye ek blessing ho aur mai har din tumhare hone ke liye grateful hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
+Saraaaa♥️ tum sirf meri mohabbat ka reason nahi ho tum meri life ka wo bold passionate aur intense experience ho jahan se main har roz inspire aur mesmerized feel karta hoon Tum meri duniya ki sabse precious aur exceptional cheez ho jise dekh kar main har emotion har feeling aur har admiration ko asli intensity ke saath mehsoos karta hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
   2: { type:"audio", content:"bonus/week2.mp3" },
   3: { type:"video", content:"bonus/week3.mp4" },
   4: { type:"text", content:"🌹 You're my eternal queen. Forever proud of you!" }
