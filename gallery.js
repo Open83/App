@@ -18,15 +18,15 @@ const localDB = {
 
 // Habits array for display
 const habits = [
- "Drink your banana shake 🍌 💧",
+  "Drink your banana shake 🍌 💧",
     "Smile in the mirror for 1 minute 😊", 
     "Listen to your favorite song 🎶",
     "Write one thing you love about yourself ✍️",
-    "Take a 10 min walk/stretch 🚶‍♀️",
+    "Write a full beautiful message on our beautiful journey start to end 😊 ",
     "Send me a heart emoji ❤️ on whatsApp",
     "Send me Nudes 💖",
     "Eat one healthy fruit 🍎",
-    "Compliment yourself loudly 🪞",
+    "Make a small “memory list” of our happiest moments together 📝💖",
     "Do 5 deep breaths 🌬️",
     "Tarif karo meri 💖",
     "Gaanaa sunaao 💃",
@@ -38,7 +38,7 @@ const habits = [
     "Share a song that reminds you of us 🎵💑",
     "Write one thing you love about me 😏",
     "Send a voice note saying something cute or funny 🎤😂",
-    "Make a small “memory list” of our happiest moments together 📝💖",
+    "Send me a bathing video ❤️",
     "Random “I love you” text days 💌",
     "Drink warm milk/herbal tea 🥛🍵",
     "Text me a random “I’m thinking of you” 💌",
