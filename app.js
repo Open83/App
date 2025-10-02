@@ -1,6 +1,6 @@
 // Cloudinary Config
 const cloudinaryConfig = {
-  cloudName: 'drgwv8k5m', // Replace with your cloud name if needed
+  cloudName: 'drgwv8k5m',
   apiKey: '219634793157291',
   apiSecret: 'siaDrAtZR5d_B6SAsNZXApkVDsI'
 };
@@ -120,10 +120,7 @@ const progressFill = document.getElementById("progress-fill");
 const progressText = document.getElementById("progress-text");
 const loadingDiv = document.getElementById("loading");
 
-// Show loading initially
-loadingDiv.classList.remove("hidden");
-
-// Popup - ONLY CHANGE: Added isBonusMessage parameter
+// Popup - Mark bonus messages with a persistent flag
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
@@ -131,23 +128,22 @@ function showPopup(content, isBonusMessage = false){
   popup.classList.remove("hidden");
   popupContent.classList.add("fade-in");
   
-  // If it's a bonus message, set a flag in sessionStorage
+  // If it's a bonus message, mark it in localStorage (persists across refresh)
   if(isBonusMessage) {
-    sessionStorage.setItem('bonusPopupOpen', 'true');
+    localStorage.setItem('bonusPopupActive', 'true');
   }
 }
 
-// ONLY CHANGE: Clear bonus popup flag when closed
+// Close popup and clear bonus flag
 document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
-  sessionStorage.removeItem('bonusPopupOpen');
+  localStorage.removeItem('bonusPopupActive');
 });
 
 // Calculate current day based on start time
 function getCurrentDay() {
   const startTime = localStorage.getItem('habitStartTime');
   if (!startTime) {
-    // First time user - set start time
     const now = new Date().getTime();
     localStorage.setItem('habitStartTime', now);
     return 1;
@@ -156,16 +152,15 @@ function getCurrentDay() {
   const start = parseInt(startTime);
   const now = new Date().getTime();
   const daysPassed = Math.floor((now - start) / (24 * 60 * 60 * 1000)) + 1;
-  return Math.min(daysPassed, 30); // Max 30 days
+  return Math.min(daysPassed, 30);
 }
 
-// Initialize or load progress data
+// Initialize or load progress data - FIXED: Faster loading
 function initializeProgress() {
   try {
     let data = localDB.getItem("progress_saniya");
     
     if (!data) {
-      // First time - create initial data
       data = { 
         proofs: [], 
         points: 0,
@@ -173,27 +168,21 @@ function initializeProgress() {
         completedDays: []
       };
       localDB.setItem("progress_saniya", data);
-      // Set start time in localStorage
       localStorage.setItem('habitStartTime', data.startTime.toString());
     } else {
-      // Sync localStorage with stored start time
       if (data.startTime) {
         localStorage.setItem('habitStartTime', data.startTime.toString());
       }
     }
     
-    // Use requestAnimationFrame for smoother calendar rendering
-    requestAnimationFrame(() => {
-      loadingDiv.classList.add("hidden");
-      updateCalendar(data);
-    });
+    // Immediately hide loading and update calendar (no delay)
+    loadingDiv.classList.add("hidden");
+    updateCalendar(data);
+    
   } catch (error) {
     console.error("Error initializing progress:", error);
-    requestAnimationFrame(() => {
-      loadingDiv.classList.add("hidden");
-      // Fallback to empty data
-      updateCalendar({ proofs: [], points: 0, completedDays: [] });
-    });
+    loadingDiv.classList.add("hidden");
+    updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
 }
 
@@ -205,14 +194,10 @@ function updateProgressData() {
   }
 }
 
-// Update Calendar
+// Update Calendar - OPTIMIZED: Faster rendering
 function updateCalendar(data) {
   const currentDay = getCurrentDay();
-  
-  // Use DocumentFragment for batch DOM updates
   const fragment = document.createDocumentFragment();
-  
-  // Pre-calculate completed days for better performance
   const completedDays = new Set(data.proofs?.map(p => p.day) || []);
   
   for(let i = 0; i < 30; i++) {
@@ -221,20 +206,16 @@ function updateCalendar(data) {
     div.className = "day";
     div.textContent = dayNum;
     
-    // Build class list efficiently
     const classes = ["day"];
     
-    // Check if day is completed
     if(completedDays.has(dayNum)) {
       classes.push("done");
     }
     
-    // Mark weekly bonus days
     if(dayNum % 7 === 0) {
       classes.push("bonus");
     }
     
-    // Lock past missed days and future days
     if(dayNum < currentDay && !completedDays.has(dayNum)) {
       classes.push("missed");
     } else if(dayNum > currentDay) {
@@ -243,10 +224,8 @@ function updateCalendar(data) {
       classes.push("current");
     }
     
-    // Set all classes at once
     div.className = classes.join(" ");
     
-    // Add click handler only for current day
     if(dayNum === currentDay && !completedDays.has(dayNum)) {
       div.addEventListener("click", () => openTask(i, data));
     } else if(dayNum !== currentDay) {
@@ -256,11 +235,9 @@ function updateCalendar(data) {
     fragment.appendChild(div);
   }
   
-  // Single DOM update
   calendar.innerHTML = "";
   calendar.appendChild(fragment);
   
-  // Update points and progress
   pointsDisplay.textContent = data.points || 0;
   const progress = ((data.points || 0) / 300 * 100).toFixed(0);
   progressFill.style.width = progress + "%";
@@ -299,18 +276,15 @@ async function submitTask(dayIndex, data) {
   
   const dayNum = dayIndex + 1;
   
-  // Show uploading message
   markDoneBtn.textContent = "Uploading... ⏳";
   markDoneBtn.disabled = true;
   
   try {
-    // Create FormData for unsigned upload
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'habit_tracker_preset'); // The preset you created
+    formData.append('upload_preset', 'habit_tracker_preset');
     formData.append('folder', `proofs/day${dayNum}`);
     
-    // Upload to Cloudinary using unsigned upload
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/upload`, {
       method: 'POST',
       body: formData
@@ -325,7 +299,6 @@ async function submitTask(dayIndex, data) {
     
     let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
     
-    // Add proof if not already exists
     if(!progressData.proofs.some(p => p.day === dayNum)) {
       progressData.proofs.push({ 
         day: dayNum, 
@@ -341,22 +314,16 @@ async function submitTask(dayIndex, data) {
       progressData.completedDays.push(dayNum);
     }
     
-    // Save to local storage
     localDB.setItem("progress_saniya", progressData);
-    
-    // Update UI
     updateCalendar(progressData);
     
-    // Hide task section
     taskSection.classList.add("hidden");
     proofUpload.value = "";
     markDoneBtn.textContent = "Mark as Done ✅";
     markDoneBtn.disabled = false;
     
-    // Show appreciation message
     showPopup(appreciationMessages[dayIndex]);
     
-    // Check for weekly bonus
     if(dayNum % 7 === 0) {
       setTimeout(() => {
         checkWeeklyBonus(dayNum, progressData);
@@ -366,7 +333,6 @@ async function submitTask(dayIndex, data) {
   } catch (error) {
     console.error('Upload failed:', error);
     
-    // Fallback: store file as base64 for local testing
     const reader = new FileReader();
     reader.onload = function(e) {
       let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
@@ -374,7 +340,7 @@ async function submitTask(dayIndex, data) {
       if(!progressData.proofs.some(p => p.day === dayNum)) {
         progressData.proofs.push({ 
           day: dayNum, 
-          url: e.target.result, // Base64 data URL as fallback
+          url: e.target.result,
           timestamp: new Date(),
           public_id: `local_day_${dayNum}_${Date.now()}`
         });
@@ -407,13 +373,12 @@ async function submitTask(dayIndex, data) {
   }
 }
 
-// Check Weekly Bonus - ONLY CHANGE: Pass true for bonus messages
+// Check Weekly Bonus - Mark as bonus message
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
   const weekEnd = week * 7;
   
-  // Count completed days in this week
   const weekCompleted = data.proofs.filter(p => 
     p.day >= weekStart && p.day <= weekEnd
   ).length;
@@ -434,18 +399,17 @@ function checkWeeklyBonus(dayNum, data) {
   }
 }
 
-// Initialize app - ONLY CHANGE: Auto-close bonus popup on refresh
+// Initialize app - FIXED: Bonus popup persists until user closes it
 document.addEventListener('DOMContentLoaded', () => {
-  // Close bonus popup on page load (after refresh)
-  const bonusPopupWasOpen = sessionStorage.getItem('bonusPopupOpen');
-  if(bonusPopupWasOpen === 'true') {
+  // Check if bonus popup was open before refresh
+  const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
+  
+  // Don't auto-close bonus popup on refresh
+  if(bonusPopupWasActive !== 'true') {
     document.getElementById("popup").classList.add("hidden");
-    sessionStorage.removeItem('bonusPopupOpen');
   }
   
   initializeProgress();
   
-  // Add event listener to update progress data periodically
   setInterval(updateProgressData, 5000);
 });
-    
