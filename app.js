@@ -108,43 +108,6 @@ Aur sach ye hai ki tum meri zindagi ka sabse bada gift ho tum meri har khushi ho
 Tumhari har khushi meri zaroorat hai tumhari har muskaan meri world hai tumhara har junoon meri addiction hai aur main hamesha tumhari duniya mein sirf tumhara hi insaan hoon tum meri reality ho meri mohabbat ho meri zindagi ho aur main chahta hoon ki hum dono hamesha ek doosre ke andar ek doosre ke saath ek doosre ke liye raw passionate wild aur infinite ho ♥️ I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋` }
 };
 
-// --- Elements ---
-const calendar = document.getElementById("calendar");
-const taskSection = document.getElementById("task-section");
-const taskTitle = document.getElementById("task-title");
-const taskDesc = document.getElementById("task-desc");
-const markDoneBtn = document.getElementById("mark-done");
-const proofUpload = document.getElementById("proof-upload");
-const pointsDisplay = document.getElementById("points");
-const progressFill = document.getElementById("progress-fill");
-const progressText = document.getElementById("progress-text");
-const loadingDiv = document.getElementById("loading");
-
-// Hide loading immediately on script load
-if(loadingDiv) {
-  loadingDiv.style.display = 'none';
-}
-
-// Popup - Mark bonus messages with a persistent flag
-function showPopup(content, isBonusMessage = false){
-  const popup = document.getElementById("popup");
-  const popupContent = document.getElementById("popup-content");
-  popupContent.innerHTML = content;
-  popup.classList.remove("hidden");
-  popupContent.classList.add("fade-in");
-  
-  // If it's a bonus message, mark it in localStorage (persists across refresh)
-  if(isBonusMessage) {
-    localStorage.setItem('bonusPopupActive', 'true');
-  }
-}
-
-// Close popup and clear bonus flag
-document.getElementById("close-popup").addEventListener("click", ()=>{
-  document.getElementById("popup").classList.add("hidden");
-  localStorage.removeItem('bonusPopupActive');
-});
-
 // Calculate current day based on start time
 function getCurrentDay() {
   const startTime = localStorage.getItem('habitStartTime');
@@ -160,55 +123,39 @@ function getCurrentDay() {
   return Math.min(daysPassed, 30);
 }
 
-// Initialize or load progress data - FIXED: Instant loading
+// Initialize or load progress data
 function initializeProgress() {
-  try {
-    let data = localDB.getItem("progress_saniya");
-    
-    if (!data) {
-      data = { 
-        proofs: [], 
-        points: 0,
-        startTime: new Date().getTime(),
-        completedDays: []
-      };
-      localDB.setItem("progress_saniya", data);
+  let data = localDB.getItem("progress_saniya");
+  
+  if (!data) {
+    data = { 
+      proofs: [], 
+      points: 0,
+      startTime: new Date().getTime(),
+      completedDays: []
+    };
+    localDB.setItem("progress_saniya", data);
+    localStorage.setItem('habitStartTime', data.startTime.toString());
+  } else {
+    if (data.startTime) {
       localStorage.setItem('habitStartTime', data.startTime.toString());
-    } else {
-      if (data.startTime) {
-        localStorage.setItem('habitStartTime', data.startTime.toString());
-      }
     }
-    
-    // Immediately update calendar (no loading screen)
-    updateCalendar(data);
-    
-  } catch (error) {
-    console.error("Error initializing progress:", error);
-    updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
+  
+  return data;
 }
 
-// Function to update progress data
-function updateProgressData() {
-  const data = localDB.getItem("progress_saniya");
-  if (data) {
-    updateCalendar(data);
-  }
-}
-
-// Update Calendar - OPTIMIZED: Faster rendering
+// Update Calendar - OPTIMIZED
 function updateCalendar(data) {
+  const calendar = document.getElementById("calendar");
   const currentDay = getCurrentDay();
-  const fragment = document.createDocumentFragment();
   const completedDays = new Set(data.proofs?.map(p => p.day) || []);
+  
+  // Clear and build calendar in one go
+  let calendarHTML = '';
   
   for(let i = 0; i < 30; i++) {
     const dayNum = i + 1;
-    const div = document.createElement("div");
-    div.className = "day";
-    div.textContent = dayNum;
-    
     const classes = ["day"];
     
     if(completedDays.has(dayNum)) {
@@ -227,24 +174,52 @@ function updateCalendar(data) {
       classes.push("current");
     }
     
-    div.className = classes.join(" ");
+    const clickable = (dayNum === currentDay && !completedDays.has(dayNum));
+    const cursor = clickable ? 'pointer' : (dayNum !== currentDay ? 'not-allowed' : 'default');
     
-    if(dayNum === currentDay && !completedDays.has(dayNum)) {
-      div.addEventListener("click", () => openTask(i, data));
-    } else if(dayNum !== currentDay) {
-      div.style.cursor = "not-allowed";
-    }
-    
-    fragment.appendChild(div);
+    calendarHTML += `<div class="${classes.join(" ")}" data-day="${dayNum}" style="cursor: ${cursor};">${dayNum}</div>`;
   }
   
-  calendar.innerHTML = "";
-  calendar.appendChild(fragment);
+  calendar.innerHTML = calendarHTML;
+  
+  // Add click handlers to clickable days
+  const days = calendar.querySelectorAll('.day');
+  days.forEach(day => {
+    const dayNum = parseInt(day.getAttribute('data-day'));
+    if(dayNum === currentDay && !completedDays.has(dayNum)) {
+      day.addEventListener("click", () => openTask(dayNum - 1, data));
+    }
+  });
+  
+  // Update points and progress
+  const pointsDisplay = document.getElementById("points");
+  const progressFill = document.getElementById("progress-fill");
+  const progressText = document.getElementById("progress-text");
   
   pointsDisplay.textContent = data.points || 0;
   const progress = ((data.points || 0) / 300 * 100).toFixed(0);
   progressFill.style.width = progress + "%";
   progressText.textContent = progress + "%";
+}
+
+// Popup - Mark bonus messages with persistent flag
+function showPopup(content, isBonusMessage = false){
+  const popup = document.getElementById("popup");
+  const popupContent = document.getElementById("popup-content");
+  popupContent.innerHTML = content;
+  popup.classList.remove("hidden");
+  popupContent.classList.add("fade-in");
+  
+  // If it's a bonus message, mark it in localStorage (persists across refresh)
+  if(isBonusMessage) {
+    localStorage.setItem('bonusPopupActive', 'true');
+  }
+}
+
+// Close popup and clear bonus flag
+function closePopup() {
+  document.getElementById("popup").classList.add("hidden");
+  localStorage.removeItem('bonusPopupActive');
 }
 
 // Open Task
@@ -262,6 +237,11 @@ function openTask(dayIndex, data) {
     return;
   }
   
+  const taskSection = document.getElementById("task-section");
+  const taskTitle = document.getElementById("task-title");
+  const taskDesc = document.getElementById("task-desc");
+  const markDoneBtn = document.getElementById("mark-done");
+  
   taskSection.classList.remove("hidden");
   taskTitle.textContent = `Day ${dayNum} Habit`;
   taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
@@ -271,7 +251,10 @@ function openTask(dayIndex, data) {
 
 // Submit Task with direct unsigned upload
 async function submitTask(dayIndex, data) {
+  const proofUpload = document.getElementById("proof-upload");
+  const markDoneBtn = document.getElementById("mark-done");
   const file = proofUpload.files[0];
+  
   if(!file) {
     alert("Please upload proof to complete the habit!");
     return;
@@ -300,7 +283,7 @@ async function submitTask(dayIndex, data) {
     const result = await response.json();
     console.log('Upload successful:', result);
     
-    let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+    let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
     
     if(!progressData.proofs.some(p => p.day === dayNum)) {
       progressData.proofs.push({ 
@@ -320,7 +303,7 @@ async function submitTask(dayIndex, data) {
     localDB.setItem("progress_saniya", progressData);
     updateCalendar(progressData);
     
-    taskSection.classList.add("hidden");
+    document.getElementById("task-section").classList.add("hidden");
     proofUpload.value = "";
     markDoneBtn.textContent = "Mark as Done ✅";
     markDoneBtn.disabled = false;
@@ -338,7 +321,7 @@ async function submitTask(dayIndex, data) {
     
     const reader = new FileReader();
     reader.onload = function(e) {
-      let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+      let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
       
       if(!progressData.proofs.some(p => p.day === dayNum)) {
         progressData.proofs.push({ 
@@ -358,7 +341,7 @@ async function submitTask(dayIndex, data) {
       localDB.setItem("progress_saniya", progressData);
       updateCalendar(progressData);
       
-      taskSection.classList.add("hidden");
+      document.getElementById("task-section").classList.add("hidden");
       proofUpload.value = "";
       markDoneBtn.textContent = "Mark as Done ✅";
       markDoneBtn.disabled = false;
@@ -402,17 +385,43 @@ function checkWeeklyBonus(dayNum, data) {
   }
 }
 
-// Initialize app - FIXED: Bonus popup persists until user closes it
+// Function to update progress data
+function updateProgressData() {
+  const data = localDB.getItem("progress_saniya");
+  if (data) {
+    updateCalendar(data);
+  }
+}
+
+// Initialize app on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if bonus popup was open before refresh
-  const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
-  
-  // Don't auto-close bonus popup on refresh
-  if(bonusPopupWasActive !== 'true') {
-    document.getElementById("popup").classList.add("hidden");
+  // Hide loading immediately
+  const loadingDiv = document.getElementById("loading");
+  if(loadingDiv) {
+    loadingDiv.style.display = 'none';
   }
   
-  initializeProgress();
+  // Initialize progress data
+  const data = initializeProgress();
   
+  // Render calendar immediately
+  updateCalendar(data);
+  
+  // Setup close button
+  const closeBtn = document.getElementById("close-popup");
+  if(closeBtn) {
+    closeBtn.addEventListener("click", closePopup);
+  }
+  
+  // Check if bonus popup should stay open (after refresh)
+  const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
+  if(bonusPopupWasActive !== 'true') {
+    const popup = document.getElementById("popup");
+    if(popup) {
+      popup.classList.add("hidden");
+    }
+  }
+  
+  // Update progress data periodically
   setInterval(updateProgressData, 5000);
 });
