@@ -92,7 +92,7 @@ Saraaaa♥️ tumne ye week complete kiya aur main sirf ye kehna chahta hoon ki 
 
 Tumhara husn tumhara jism tumhara andaaz har ek aspect har ek curve har ek detail mujhe literal mesmerize karta hai Tumhari aankhen wo gehraai hain jahan se main sirf tumhe dekh kar hi apne din ko perfect mehsoos karta hoon Tumhari muskaan tumhare hoth tumhare chehre ka noor ye sab ek aisi intensity lekar aata hai jo sirf admiration nahi balki ek raw passionate feeling jagata hai
 
-Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mujhe yaad dilate hain ki tum mere liye sirf beautiful nahi balki rare aur priceless ho Tum meri Saraaaa♥️ ho meri desire ka asal matlab ho meri appreciation aur respect ka ultimate form ho Tumhare saath har moment feel hota hai ki life kitni complete aur perfect ho sakti hai
+Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mujhe yaad dilate hain ki tum mere liye sirf beautiful nahi balki rare aur priceless ho Tum meri Saraaaaaho meri desire ka asal matlab ho meri appreciation aur respect ka ultimate form ho Tumhare saath har moment feel hota hai ki life kitni complete aur perfect ho sakti hai
 
 Saraaaa♥️ tum sirf meri mohabbat ka reason nahi ho tum meri life ka wo bold passionate aur intense experience ho jahan se main har roz inspire aur mesmerized feel karta hoon Tum meri duniya ki sabse precious aur exceptional cheez ho jise dekh kar main har emotion har feeling aur har admiration ko asli intensity ke saath mehsoos karta hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
   2: { type:"audio", content:"bonus/week2.mp3" },
