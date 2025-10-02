@@ -1,6 +1,6 @@
 // Cloudinary Config
 const cloudinaryConfig = {
-  cloudName: 'drgwv8k5m',
+  cloudName: 'drgwv8k5m', // Replace with your cloud name if needed
   apiKey: '219634793157291',
   apiSecret: 'siaDrAtZR5d_B6SAsNZXApkVDsI'
 };
@@ -26,7 +26,7 @@ const habits = [
     "Send me a heart emoji ❤️ on whatsApp",
     "Send me Nudes 💖",
     "Eat one healthy fruit 🍎",
-    "Make a small 'memory list' of our happiest moments together 📝💖",
+    "Make a small "memory list" of our happiest moments together 📝💖",
     "Do 5 deep breaths 🌬️",
     "Tarif karo meri 💖",
     "Gaanaa sunaao 💃",
@@ -92,7 +92,7 @@ Saraaaa♥️ tumne ye week complete kiya aur main sirf ye kehna chahta hoon ki 
 
 Tumhara husn tumhara jism tumhara andaaz har ek aspect har ek curve har ek detail mujhe literal mesmerize karta hai Tumhari aankhen wo gehraai hain jahan se main sirf tumhe dekh kar hi apne din ko perfect mehsoos karta hoon Tumhari muskaan tumhare hoth tumhare chehre ka noor ye sab ek aisi intensity lekar aata hai jo sirf admiration nahi balki ek raw passionate feeling jagata hai
 
-Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mujhe yaad dilate hain ki tum mere liye sirf beautiful nahi balki rare aur priceless ho Tum meri Saraaaaaho meri desire ka asal matlab ho meri appreciation aur respect ka ultimate form ho Tumhare saath har moment feel hota hai ki life kitni complete aur perfect ho sakti hai
+Tumhari chaal ka grace tumhari zulfon ka sayaa tumhari body ka har nuance sab mujhe yaad dilate hain ki tum mere liye sirf beautiful nahi balki rare aur priceless ho Tum meri Saraaaa♥️ ho meri desire ka asal matlab ho meri appreciation aur respect ka ultimate form ho Tumhare saath har moment feel hota hai ki life kitni complete aur perfect ho sakti hai
 
 Saraaaa♥️ tum sirf meri mohabbat ka reason nahi ho tum meri life ka wo bold passionate aur intense experience ho jahan se main har roz inspire aur mesmerized feel karta hoon Tum meri duniya ki sabse precious aur exceptional cheez ho jise dekh kar main har emotion har feeling aur har admiration ko asli intensity ke saath mehsoos karta hoon I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋` },
   2: { type:"audio", content:"bonus/week2.mp3" },
@@ -108,10 +108,43 @@ Aur sach ye hai ki tum meri zindagi ka sabse bada gift ho tum meri har khushi ho
 Tumhari har khushi meri zaroorat hai tumhari har muskaan meri world hai tumhara har junoon meri addiction hai aur main hamesha tumhari duniya mein sirf tumhara hi insaan hoon tum meri reality ho meri mohabbat ho meri zindagi ho aur main chahta hoon ki hum dono hamesha ek doosre ke andar ek doosre ke saath ek doosre ke liye raw passionate wild aur infinite ho ♥️ I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋` }
 };
 
-// Calculate current day
+// --- Elements ---
+const calendar = document.getElementById("calendar");
+const taskSection = document.getElementById("task-section");
+const taskTitle = document.getElementById("task-title");
+const taskDesc = document.getElementById("task-desc");
+const markDoneBtn = document.getElementById("mark-done");
+const proofUpload = document.getElementById("proof-upload");
+const pointsDisplay = document.getElementById("points");
+const progressFill = document.getElementById("progress-fill");
+const progressText = document.getElementById("progress-text");
+const loadingDiv = document.getElementById("loading");
+
+// Popup - CHANGED: Use localStorage instead of sessionStorage
+function showPopup(content, isBonusMessage = false){
+  const popup = document.getElementById("popup");
+  const popupContent = document.getElementById("popup-content");
+  popupContent.innerHTML = content;
+  popup.classList.remove("hidden");
+  popupContent.classList.add("fade-in");
+  
+  // CHANGED: Use localStorage for persistence across refresh
+  if(isBonusMessage) {
+    localStorage.setItem('bonusPopupOpen', 'true');
+  }
+}
+
+// CHANGED: Clear bonus popup flag when closed
+document.getElementById("close-popup").addEventListener("click", ()=>{
+  document.getElementById("popup").classList.add("hidden");
+  localStorage.removeItem('bonusPopupOpen');
+});
+
+// Calculate current day based on start time
 function getCurrentDay() {
   const startTime = localStorage.getItem('habitStartTime');
   if (!startTime) {
+    // First time user - set start time
     const now = new Date().getTime();
     localStorage.setItem('habitStartTime', now);
     return 1;
@@ -120,94 +153,111 @@ function getCurrentDay() {
   const start = parseInt(startTime);
   const now = new Date().getTime();
   const daysPassed = Math.floor((now - start) / (24 * 60 * 60 * 1000)) + 1;
-  return Math.min(daysPassed, 30);
+  return Math.min(daysPassed, 30); // Max 30 days
 }
 
-// Initialize progress
+// Initialize or load progress data
 function initializeProgress() {
-  let data = localDB.getItem("progress_saniya");
-  
-  if (!data) {
-    data = { 
-      proofs: [], 
-      points: 0,
-      startTime: new Date().getTime(),
-      completedDays: []
-    };
-    localDB.setItem("progress_saniya", data);
-    localStorage.setItem('habitStartTime', data.startTime.toString());
-  } else {
-    if (data.startTime) {
+  try {
+    let data = localDB.getItem("progress_saniya");
+    
+    if (!data) {
+      // First time - create initial data
+      data = { 
+        proofs: [], 
+        points: 0,
+        startTime: new Date().getTime(),
+        completedDays: []
+      };
+      localDB.setItem("progress_saniya", data);
+      // Set start time in localStorage
       localStorage.setItem('habitStartTime', data.startTime.toString());
+    } else {
+      // Sync localStorage with stored start time
+      if (data.startTime) {
+        localStorage.setItem('habitStartTime', data.startTime.toString());
+      }
     }
+    
+    // CHANGED: Remove loading immediately
+    loadingDiv.classList.add("hidden");
+    updateCalendar(data);
+  } catch (error) {
+    console.error("Error initializing progress:", error);
+    loadingDiv.classList.add("hidden");
+    // Fallback to empty data
+    updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
-  
-  return data;
+}
+
+// Function to update progress data
+function updateProgressData() {
+  const data = localDB.getItem("progress_saniya");
+  if (data) {
+    updateCalendar(data);
+  }
 }
 
 // Update Calendar
 function updateCalendar(data) {
-  const calendar = document.getElementById("calendar");
-  if(!calendar) return;
-  
   const currentDay = getCurrentDay();
-  const completedDays = new Set(data.proofs?.map(p => p.day) || []);
   
-  let html = '';
+  // Use DocumentFragment for batch DOM updates
+  const fragment = document.createDocumentFragment();
+  
+  // Pre-calculate completed days for better performance
+  const completedDays = new Set(data.proofs?.map(p => p.day) || []);
   
   for(let i = 0; i < 30; i++) {
     const dayNum = i + 1;
+    const div = document.createElement("div");
+    div.className = "day";
+    div.textContent = dayNum;
+    
+    // Build class list efficiently
     const classes = ["day"];
     
-    if(completedDays.has(dayNum)) classes.push("done");
-    if(dayNum % 7 === 0) classes.push("bonus");
-    if(dayNum < currentDay && !completedDays.has(dayNum)) classes.push("missed");
-    else if(dayNum > currentDay) classes.push("locked");
-    else if(dayNum === currentDay) classes.push("current");
-    
-    html += `<div class="${classes.join(" ")}" data-day="${dayNum}">${dayNum}</div>`;
-  }
-  
-  calendar.innerHTML = html;
-  
-  calendar.querySelectorAll('.day').forEach(day => {
-    const dayNum = parseInt(day.getAttribute('data-day'));
-    if(dayNum === currentDay && !completedDays.has(dayNum)) {
-      day.style.cursor = 'pointer';
-      day.addEventListener("click", () => openTask(dayNum - 1, data));
+    // Check if day is completed
+    if(completedDays.has(dayNum)) {
+      classes.push("done");
     }
-  });
-  
-  const pointsDisplay = document.getElementById("points");
-  const progressFill = document.getElementById("progress-fill");
-  const progressText = document.getElementById("progress-text");
-  
-  if(pointsDisplay) pointsDisplay.textContent = data.points || 0;
-  if(progressFill && progressText) {
-    const progress = ((data.points || 0) / 300 * 100).toFixed(0);
-    progressFill.style.width = progress + "%";
-    progressText.textContent = progress + "%";
+    
+    // Mark weekly bonus days
+    if(dayNum % 7 === 0) {
+      classes.push("bonus");
+    }
+    
+    // Lock past missed days and future days
+    if(dayNum < currentDay && !completedDays.has(dayNum)) {
+      classes.push("missed");
+    } else if(dayNum > currentDay) {
+      classes.push("locked");
+    } else if(dayNum === currentDay) {
+      classes.push("current");
+    }
+    
+    // Set all classes at once
+    div.className = classes.join(" ");
+    
+    // Add click handler only for current day
+    if(dayNum === currentDay && !completedDays.has(dayNum)) {
+      div.addEventListener("click", () => openTask(i, data));
+    } else if(dayNum !== currentDay) {
+      div.style.cursor = "not-allowed";
+    }
+    
+    fragment.appendChild(div);
   }
-}
-
-// Popup
-function showPopup(content, isBonusMessage = false){
-  const popup = document.getElementById("popup");
-  const popupContent = document.getElementById("popup-content");
-  if(!popup || !popupContent) return;
   
-  popupContent.innerHTML = content;
-  popup.classList.remove("hidden");
+  // Single DOM update
+  calendar.innerHTML = "";
+  calendar.appendChild(fragment);
   
-  if(isBonusMessage) {
-    localStorage.setItem('bonusPopupActive', 'true');
-  }
-}
-
-function closePopup() {
-  const popup = document.getElementById("popup");
-  if(popup) popup.classList.add("hidden");
-  localStorage.removeItem('bonusPopupActive');
+  // Update points and progress
+  pointsDisplay.textContent = data.points || 0;
+  const progress = ((data.points || 0) / 300 * 100).toFixed(0);
+  progressFill.style.width = progress + "%";
+  progressText.textContent = progress + "%";
 }
 
 // Open Task
@@ -225,26 +275,15 @@ function openTask(dayIndex, data) {
     return;
   }
   
-  const taskSection = document.getElementById("task-section");
-  const taskTitle = document.getElementById("task-title");
-  const taskDesc = document.getElementById("task-desc");
-  const markDoneBtn = document.getElementById("mark-done");
-  
-  if(!taskSection) return;
-  
   taskSection.classList.remove("hidden");
-  if(taskTitle) taskTitle.textContent = `Day ${dayNum} Habit`;
-  if(taskDesc) taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
-  if(markDoneBtn) markDoneBtn.onclick = () => submitTask(dayIndex, data);
+  taskTitle.textContent = `Day ${dayNum} Habit`;
+  taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
+  
+  markDoneBtn.onclick = () => submitTask(dayIndex, data);
 }
 
-// Submit Task
+// Submit Task with direct unsigned upload
 async function submitTask(dayIndex, data) {
-  const proofUpload = document.getElementById("proof-upload");
-  const markDoneBtn = document.getElementById("mark-done");
-  
-  if(!proofUpload || !markDoneBtn) return;
-  
   const file = proofUpload.files[0];
   if(!file) {
     alert("Please upload proof to complete the habit!");
@@ -252,25 +291,34 @@ async function submitTask(dayIndex, data) {
   }
   
   const dayNum = dayIndex + 1;
+  
+  // Show uploading message
   markDoneBtn.textContent = "Uploading... ⏳";
   markDoneBtn.disabled = true;
   
   try {
+    // Create FormData for unsigned upload
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'habit_tracker_preset');
+    formData.append('upload_preset', 'habit_tracker_preset'); // The preset you created
     formData.append('folder', `proofs/day${dayNum}`);
     
+    // Upload to Cloudinary using unsigned upload
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/upload`, {
       method: 'POST',
       body: formData
     });
     
-    if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status}`);
+    }
     
     const result = await response.json();
-    let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+    console.log('Upload successful:', result);
     
+    let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+    
+    // Add proof if not already exists
     if(!progressData.proofs.some(p => p.day === dayNum)) {
       progressData.proofs.push({ 
         day: dayNum, 
@@ -279,68 +327,89 @@ async function submitTask(dayIndex, data) {
         public_id: result.public_id
       });
       progressData.points = (progressData.points || 0) + 10;
-      if(!progressData.completedDays) progressData.completedDays = [];
+      
+      if(!progressData.completedDays) {
+        progressData.completedDays = [];
+      }
       progressData.completedDays.push(dayNum);
     }
     
+    // Save to local storage
     localDB.setItem("progress_saniya", progressData);
+    
+    // Update UI
     updateCalendar(progressData);
     
-    const taskSection = document.getElementById("task-section");
-    if(taskSection) taskSection.classList.add("hidden");
+    // Hide task section
+    taskSection.classList.add("hidden");
     proofUpload.value = "";
     markDoneBtn.textContent = "Mark as Done ✅";
     markDoneBtn.disabled = false;
     
+    // Show appreciation message
     showPopup(appreciationMessages[dayIndex]);
     
+    // Check for weekly bonus
     if(dayNum % 7 === 0) {
-      setTimeout(() => checkWeeklyBonus(dayNum, progressData), 2000);
+      setTimeout(() => {
+        checkWeeklyBonus(dayNum, progressData);
+      }, 2000);
     }
     
   } catch (error) {
+    console.error('Upload failed:', error);
+    
+    // Fallback: store file as base64 for local testing
     const reader = new FileReader();
     reader.onload = function(e) {
-      let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
+      let progressData = data ? { ...data } : localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
       
       if(!progressData.proofs.some(p => p.day === dayNum)) {
         progressData.proofs.push({ 
           day: dayNum, 
-          url: e.target.result,
+          url: e.target.result, // Base64 data URL as fallback
           timestamp: new Date(),
           public_id: `local_day_${dayNum}_${Date.now()}`
         });
         progressData.points = (progressData.points || 0) + 10;
-        if(!progressData.completedDays) progressData.completedDays = [];
+        
+        if(!progressData.completedDays) {
+          progressData.completedDays = [];
+        }
         progressData.completedDays.push(dayNum);
       }
       
       localDB.setItem("progress_saniya", progressData);
       updateCalendar(progressData);
       
-      const taskSection = document.getElementById("task-section");
-      if(taskSection) taskSection.classList.add("hidden");
+      taskSection.classList.add("hidden");
       proofUpload.value = "";
       markDoneBtn.textContent = "Mark as Done ✅";
       markDoneBtn.disabled = false;
       
-      showPopup(appreciationMessages[dayIndex] + "<br><br><small>Note: Image stored locally.</small>");
+      showPopup(appreciationMessages[dayIndex] + "<br><br><small>Note: Image stored locally. Upload preset may need configuration for cloud storage.</small>");
       
       if(dayNum % 7 === 0) {
-        setTimeout(() => checkWeeklyBonus(dayNum, progressData), 2000);
+        setTimeout(() => {
+          checkWeeklyBonus(dayNum, progressData);
+        }, 2000);
       }
     };
+    
     reader.readAsDataURL(file);
   }
 }
 
-// Check Weekly Bonus
+// Check Weekly Bonus - CHANGED: Pass true for bonus messages
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
   const weekEnd = week * 7;
   
-  const weekCompleted = data.proofs.filter(p => p.day >= weekStart && p.day <= weekEnd).length;
+  // Count completed days in this week
+  const weekCompleted = data.proofs.filter(p => 
+    p.day >= weekStart && p.day <= weekEnd
+  ).length;
   
   if(weekCompleted === 7) {
     const bonus = bonusMessages[week];
@@ -358,25 +427,16 @@ function checkWeeklyBonus(dayNum, data) {
   }
 }
 
-// Update progress
-function updateProgressData() {
-  const data = localDB.getItem("progress_saniya");
-  if (data) updateCalendar(data);
-}
-
-// Initialize
+// Initialize app - CHANGED: Don't auto-close bonus popup
 document.addEventListener('DOMContentLoaded', () => {
-  const data = initializeProgress();
-  updateCalendar(data);
-  
-  const closeBtn = document.getElementById("close-popup");
-  if(closeBtn) closeBtn.addEventListener("click", closePopup);
-  
-  const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
-  if(bonusPopupWasActive !== 'true') {
-    const popup = document.getElementById("popup");
-    if(popup) popup.classList.add("hidden");
+  // CHANGED: Check if bonus popup should stay open (don't auto-close on refresh)
+  const bonusPopupWasOpen = localStorage.getItem('bonusPopupOpen');
+  if(bonusPopupWasOpen !== 'true') {
+    document.getElementById("popup").classList.add("hidden");
   }
   
+  initializeProgress();
+  
+  // Add event listener to update progress data periodically
   setInterval(updateProgressData, 5000);
 });
