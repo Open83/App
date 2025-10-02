@@ -448,3 +448,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add event listener to update progress data periodically
   setInterval(updateProgressData, 5000);
 });
+    
