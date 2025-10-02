@@ -123,7 +123,7 @@ const loadingDiv = document.getElementById("loading");
 // Show loading initially
 loadingDiv.classList.remove("hidden");
 
-// Popup - Modified to clear bonus popup flag on close
+// Popup - ONLY CHANGE: Added isBonusMessage parameter
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
@@ -137,9 +137,9 @@ function showPopup(content, isBonusMessage = false){
   }
 }
 
+// ONLY CHANGE: Clear bonus popup flag when closed
 document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
-  // Clear bonus popup flag when closed
   sessionStorage.removeItem('bonusPopupOpen');
 });
 
@@ -407,7 +407,7 @@ async function submitTask(dayIndex, data) {
   }
 }
 
-// Check Weekly Bonus - Modified to use sessionStorage
+// Check Weekly Bonus - ONLY CHANGE: Pass true for bonus messages
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
@@ -422,17 +422,19 @@ function checkWeeklyBonus(dayNum, data) {
     const bonus = bonusMessages[week];
     if(bonus) {
       if(bonus.type === "text") {
-        showPopup(bonus.content, true); // Pass true to indicate it's a bonus message
+        showPopup(bonus.content, true);
       } else if(bonus.type === "audio") {
         showPopup(`<div style="text-align: center;"><p>🎵 Special Audio Message for You! 🎵</p><audio controls src="${bonus.content}" style="width: 100%; max-width: 300px;"></audio></div>`, true);
       } else if(bonus.type === "video") {
         showPopup(`<div style="text-align: center;"><p>🎬 Special Video Message for You! 🎬</p><video controls style="width: 100%; max-width: 300px;"><source src="${bonus.content}" type="video/mp4"></video></div>`, true);
       }
     }
+  } else {
+    showPopup("⚠️ Weekly bonus locked! You missed some habits this week.");
   }
 }
 
-// Initialize app
+// Initialize app - ONLY CHANGE: Auto-close bonus popup on refresh
 document.addEventListener('DOMContentLoaded', () => {
   // Close bonus popup on page load (after refresh)
   const bonusPopupWasOpen = sessionStorage.getItem('bonusPopupOpen');
