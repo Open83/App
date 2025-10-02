@@ -26,7 +26,7 @@ const habits = [
     "Send me a heart emoji ❤️ on whatsApp",
     "Send me Nudes 💖",
     "Eat one healthy fruit 🍎",
-    "Make a small “memory list” of our happiest moments together 📝💖",
+    "Make a small "memory list" of our happiest moments together 📝💖",
     "Do 5 deep breaths 🌬️",
     "Tarif karo meri 💖",
     "Gaanaa sunaao 💃",
@@ -39,9 +39,9 @@ const habits = [
     "Write one thing you love about me 😏",
     "Send a voice note saying something cute or funny 🎤😂",
     "Send me a bathing video ❤️",
-    "Random “I love you” text days 💌",
+    "Random "I love you" text days 💌",
     "Drink warm milk/herbal tea 🥛🍵",
-    "Text me a random “I’m thinking of you” 💌",
+    "Text me a random "I'm thinking of you" 💌",
     "Make a best dish for me 😍",
     "Close eyes & imagine me 💑",
     "Write one word that describes 'us' 🥰",
@@ -123,16 +123,24 @@ const loadingDiv = document.getElementById("loading");
 // Show loading initially
 loadingDiv.classList.remove("hidden");
 
-// Popup
-function showPopup(content){
+// Popup - Modified to clear bonus popup flag on close
+function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
   popupContent.innerHTML = content;
   popup.classList.remove("hidden");
   popupContent.classList.add("fade-in");
+  
+  // If it's a bonus message, set a flag in sessionStorage
+  if(isBonusMessage) {
+    sessionStorage.setItem('bonusPopupOpen', 'true');
+  }
 }
+
 document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
+  // Clear bonus popup flag when closed
+  sessionStorage.removeItem('bonusPopupOpen');
 });
 
 // Calculate current day based on start time
@@ -399,7 +407,7 @@ async function submitTask(dayIndex, data) {
   }
 }
 
-// Check Weekly Bonus
+// Check Weekly Bonus - Modified to use sessionStorage
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
@@ -414,20 +422,25 @@ function checkWeeklyBonus(dayNum, data) {
     const bonus = bonusMessages[week];
     if(bonus) {
       if(bonus.type === "text") {
-        showPopup(bonus.content);
+        showPopup(bonus.content, true); // Pass true to indicate it's a bonus message
       } else if(bonus.type === "audio") {
-        showPopup(`<div style="text-align: center;"><p>🎵 Special Audio Message for You! 🎵</p><audio controls src="${bonus.content}" style="width: 100%; max-width: 300px;"></audio></div>`);
+        showPopup(`<div style="text-align: center;"><p>🎵 Special Audio Message for You! 🎵</p><audio controls src="${bonus.content}" style="width: 100%; max-width: 300px;"></audio></div>`, true);
       } else if(bonus.type === "video") {
-        showPopup(`<div style="text-align: center;"><p>🎬 Special Video Message for You! 🎬</p><video controls style="width: 100%; max-width: 300px;"><source src="${bonus.content}" type="video/mp4"></video></div>`);
+        showPopup(`<div style="text-align: center;"><p>🎬 Special Video Message for You! 🎬</p><video controls style="width: 100%; max-width: 300px;"><source src="${bonus.content}" type="video/mp4"></video></div>`, true);
       }
     }
-  } else {
-    showPopup("⚠️ Weekly bonus locked! You missed some habits this week.");
   }
 }
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+  // Close bonus popup on page load (after refresh)
+  const bonusPopupWasOpen = sessionStorage.getItem('bonusPopupOpen');
+  if(bonusPopupWasOpen === 'true') {
+    document.getElementById("popup").classList.add("hidden");
+    sessionStorage.removeItem('bonusPopupOpen');
+  }
+  
   initializeProgress();
   
   // Add event listener to update progress data periodically
