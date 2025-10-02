@@ -108,6 +108,12 @@ Aur sach ye hai ki tum meri zindagi ka sabse bada gift ho tum meri har khushi ho
 Tumhari har khushi meri zaroorat hai tumhari har muskaan meri world hai tumhara har junoon meri addiction hai aur main hamesha tumhari duniya mein sirf tumhara hi insaan hoon tum meri reality ho meri mohabbat ho meri zindagi ho aur main chahta hoon ki hum dono hamesha ek doosre ke andar ek doosre ke saath ek doosre ke liye raw passionate wild aur infinite ho ♥️ I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋` }
 };
 
+// IMMEDIATELY HIDE LOADING - Execute before anything else
+const loadingDiv = document.getElementById("loading");
+if(loadingDiv) {
+  loadingDiv.style.display = 'none';
+}
+
 // Calculate current day based on start time
 function getCurrentDay() {
   const startTime = localStorage.getItem('habitStartTime');
@@ -145,13 +151,14 @@ function initializeProgress() {
   return data;
 }
 
-// Update Calendar - OPTIMIZED
+// Update Calendar - OPTIMIZED for instant rendering
 function updateCalendar(data) {
   const calendar = document.getElementById("calendar");
+  if(!calendar) return;
+  
   const currentDay = getCurrentDay();
   const completedDays = new Set(data.proofs?.map(p => p.day) || []);
   
-  // Clear and build calendar in one go
   let calendarHTML = '';
   
   for(let i = 0; i < 30; i++) {
@@ -182,7 +189,6 @@ function updateCalendar(data) {
   
   calendar.innerHTML = calendarHTML;
   
-  // Add click handlers to clickable days
   const days = calendar.querySelectorAll('.day');
   days.forEach(day => {
     const dayNum = parseInt(day.getAttribute('data-day'));
@@ -191,26 +197,28 @@ function updateCalendar(data) {
     }
   });
   
-  // Update points and progress
   const pointsDisplay = document.getElementById("points");
   const progressFill = document.getElementById("progress-fill");
   const progressText = document.getElementById("progress-text");
   
-  pointsDisplay.textContent = data.points || 0;
-  const progress = ((data.points || 0) / 300 * 100).toFixed(0);
-  progressFill.style.width = progress + "%";
-  progressText.textContent = progress + "%";
+  if(pointsDisplay) pointsDisplay.textContent = data.points || 0;
+  if(progressFill && progressText) {
+    const progress = ((data.points || 0) / 300 * 100).toFixed(0);
+    progressFill.style.width = progress + "%";
+    progressText.textContent = progress + "%";
+  }
 }
 
 // Popup - Mark bonus messages with persistent flag
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
+  if(!popup || !popupContent) return;
+  
   popupContent.innerHTML = content;
   popup.classList.remove("hidden");
   popupContent.classList.add("fade-in");
   
-  // If it's a bonus message, mark it in localStorage (persists across refresh)
   if(isBonusMessage) {
     localStorage.setItem('bonusPopupActive', 'true');
   }
@@ -218,7 +226,10 @@ function showPopup(content, isBonusMessage = false){
 
 // Close popup and clear bonus flag
 function closePopup() {
-  document.getElementById("popup").classList.add("hidden");
+  const popup = document.getElementById("popup");
+  if(popup) {
+    popup.classList.add("hidden");
+  }
   localStorage.removeItem('bonusPopupActive');
 }
 
@@ -242,6 +253,8 @@ function openTask(dayIndex, data) {
   const taskDesc = document.getElementById("task-desc");
   const markDoneBtn = document.getElementById("mark-done");
   
+  if(!taskSection || !taskTitle || !taskDesc || !markDoneBtn) return;
+  
   taskSection.classList.remove("hidden");
   taskTitle.textContent = `Day ${dayNum} Habit`;
   taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
@@ -253,6 +266,9 @@ function openTask(dayIndex, data) {
 async function submitTask(dayIndex, data) {
   const proofUpload = document.getElementById("proof-upload");
   const markDoneBtn = document.getElementById("mark-done");
+  
+  if(!proofUpload || !markDoneBtn) return;
+  
   const file = proofUpload.files[0];
   
   if(!file) {
@@ -303,7 +319,8 @@ async function submitTask(dayIndex, data) {
     localDB.setItem("progress_saniya", progressData);
     updateCalendar(progressData);
     
-    document.getElementById("task-section").classList.add("hidden");
+    const taskSection = document.getElementById("task-section");
+    if(taskSection) taskSection.classList.add("hidden");
     proofUpload.value = "";
     markDoneBtn.textContent = "Mark as Done ✅";
     markDoneBtn.disabled = false;
@@ -341,7 +358,8 @@ async function submitTask(dayIndex, data) {
       localDB.setItem("progress_saniya", progressData);
       updateCalendar(progressData);
       
-      document.getElementById("task-section").classList.add("hidden");
+      const taskSection = document.getElementById("task-section");
+      if(taskSection) taskSection.classList.add("hidden");
       proofUpload.value = "";
       markDoneBtn.textContent = "Mark as Done ✅";
       markDoneBtn.disabled = false;
@@ -395,16 +413,14 @@ function updateProgressData() {
 
 // Initialize app on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  // Hide loading immediately
+  // Force hide loading
   const loadingDiv = document.getElementById("loading");
   if(loadingDiv) {
     loadingDiv.style.display = 'none';
   }
   
-  // Initialize progress data
+  // Initialize and render
   const data = initializeProgress();
-  
-  // Render calendar immediately
   updateCalendar(data);
   
   // Setup close button
@@ -413,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBtn.addEventListener("click", closePopup);
   }
   
-  // Check if bonus popup should stay open (after refresh)
+  // Check if bonus popup should stay open
   const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
   if(bonusPopupWasActive !== 'true') {
     const popup = document.getElementById("popup");
@@ -422,6 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // Update progress data periodically
+  // Update progress periodically
   setInterval(updateProgressData, 5000);
 });
