@@ -26,7 +26,7 @@ const habits = [
     "Send me a heart emoji ❤️ on whatsApp",
     "Send me Nudes 💖",
     "Eat one healthy fruit 🍎",
-    "Make a small "memory list" of our happiest moments together 📝💖",
+    "Make a small 'memory list' of our happiest moments together 📝💖",
     "Do 5 deep breaths 🌬️",
     "Tarif karo meri 💖",
     "Gaanaa sunaao 💃",
