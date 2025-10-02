@@ -108,13 +108,7 @@ Aur sach ye hai ki tum meri zindagi ka sabse bada gift ho tum meri har khushi ho
 Tumhari har khushi meri zaroorat hai tumhari har muskaan meri world hai tumhara har junoon meri addiction hai aur main hamesha tumhari duniya mein sirf tumhara hi insaan hoon tum meri reality ho meri mohabbat ho meri zindagi ho aur main chahta hoon ki hum dono hamesha ek doosre ke andar ek doosre ke saath ek doosre ke liye raw passionate wild aur infinite ho ♥️ I lykeeeeee Uuuuuhhhhhhhhhhhhhhhhhh Meri Jaaaaaaaaaaaaannnnnnnn♥️🌹💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋💋` }
 };
 
-// IMMEDIATELY HIDE LOADING - Execute before anything else
-const loadingDiv = document.getElementById("loading");
-if(loadingDiv) {
-  loadingDiv.style.display = 'none';
-}
-
-// Calculate current day based on start time
+// Calculate current day
 function getCurrentDay() {
   const startTime = localStorage.getItem('habitStartTime');
   if (!startTime) {
@@ -129,7 +123,7 @@ function getCurrentDay() {
   return Math.min(daysPassed, 30);
 }
 
-// Initialize or load progress data
+// Initialize progress
 function initializeProgress() {
   let data = localDB.getItem("progress_saniya");
   
@@ -151,7 +145,7 @@ function initializeProgress() {
   return data;
 }
 
-// Update Calendar - OPTIMIZED for instant rendering
+// Update Calendar
 function updateCalendar(data) {
   const calendar = document.getElementById("calendar");
   if(!calendar) return;
@@ -159,40 +153,27 @@ function updateCalendar(data) {
   const currentDay = getCurrentDay();
   const completedDays = new Set(data.proofs?.map(p => p.day) || []);
   
-  let calendarHTML = '';
+  let html = '';
   
   for(let i = 0; i < 30; i++) {
     const dayNum = i + 1;
     const classes = ["day"];
     
-    if(completedDays.has(dayNum)) {
-      classes.push("done");
-    }
+    if(completedDays.has(dayNum)) classes.push("done");
+    if(dayNum % 7 === 0) classes.push("bonus");
+    if(dayNum < currentDay && !completedDays.has(dayNum)) classes.push("missed");
+    else if(dayNum > currentDay) classes.push("locked");
+    else if(dayNum === currentDay) classes.push("current");
     
-    if(dayNum % 7 === 0) {
-      classes.push("bonus");
-    }
-    
-    if(dayNum < currentDay && !completedDays.has(dayNum)) {
-      classes.push("missed");
-    } else if(dayNum > currentDay) {
-      classes.push("locked");
-    } else if(dayNum === currentDay) {
-      classes.push("current");
-    }
-    
-    const clickable = (dayNum === currentDay && !completedDays.has(dayNum));
-    const cursor = clickable ? 'pointer' : (dayNum !== currentDay ? 'not-allowed' : 'default');
-    
-    calendarHTML += `<div class="${classes.join(" ")}" data-day="${dayNum}" style="cursor: ${cursor};">${dayNum}</div>`;
+    html += `<div class="${classes.join(" ")}" data-day="${dayNum}">${dayNum}</div>`;
   }
   
-  calendar.innerHTML = calendarHTML;
+  calendar.innerHTML = html;
   
-  const days = calendar.querySelectorAll('.day');
-  days.forEach(day => {
+  calendar.querySelectorAll('.day').forEach(day => {
     const dayNum = parseInt(day.getAttribute('data-day'));
     if(dayNum === currentDay && !completedDays.has(dayNum)) {
+      day.style.cursor = 'pointer';
       day.addEventListener("click", () => openTask(dayNum - 1, data));
     }
   });
@@ -209,7 +190,7 @@ function updateCalendar(data) {
   }
 }
 
-// Popup - Mark bonus messages with persistent flag
+// Popup
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
@@ -217,19 +198,15 @@ function showPopup(content, isBonusMessage = false){
   
   popupContent.innerHTML = content;
   popup.classList.remove("hidden");
-  popupContent.classList.add("fade-in");
   
   if(isBonusMessage) {
     localStorage.setItem('bonusPopupActive', 'true');
   }
 }
 
-// Close popup and clear bonus flag
 function closePopup() {
   const popup = document.getElementById("popup");
-  if(popup) {
-    popup.classList.add("hidden");
-  }
+  if(popup) popup.classList.add("hidden");
   localStorage.removeItem('bonusPopupActive');
 }
 
@@ -253,16 +230,15 @@ function openTask(dayIndex, data) {
   const taskDesc = document.getElementById("task-desc");
   const markDoneBtn = document.getElementById("mark-done");
   
-  if(!taskSection || !taskTitle || !taskDesc || !markDoneBtn) return;
+  if(!taskSection) return;
   
   taskSection.classList.remove("hidden");
-  taskTitle.textContent = `Day ${dayNum} Habit`;
-  taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
-  
-  markDoneBtn.onclick = () => submitTask(dayIndex, data);
+  if(taskTitle) taskTitle.textContent = `Day ${dayNum} Habit`;
+  if(taskDesc) taskDesc.innerHTML = `<strong>${habits[dayIndex]}</strong><br><br><em>${appreciationMessages[dayIndex]}</em>`;
+  if(markDoneBtn) markDoneBtn.onclick = () => submitTask(dayIndex, data);
 }
 
-// Submit Task with direct unsigned upload
+// Submit Task
 async function submitTask(dayIndex, data) {
   const proofUpload = document.getElementById("proof-upload");
   const markDoneBtn = document.getElementById("mark-done");
@@ -270,14 +246,12 @@ async function submitTask(dayIndex, data) {
   if(!proofUpload || !markDoneBtn) return;
   
   const file = proofUpload.files[0];
-  
   if(!file) {
     alert("Please upload proof to complete the habit!");
     return;
   }
   
   const dayNum = dayIndex + 1;
-  
   markDoneBtn.textContent = "Uploading... ⏳";
   markDoneBtn.disabled = true;
   
@@ -292,13 +266,9 @@ async function submitTask(dayIndex, data) {
       body: formData
     });
     
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
     
     const result = await response.json();
-    console.log('Upload successful:', result);
-    
     let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
     
     if(!progressData.proofs.some(p => p.day === dayNum)) {
@@ -309,10 +279,7 @@ async function submitTask(dayIndex, data) {
         public_id: result.public_id
       });
       progressData.points = (progressData.points || 0) + 10;
-      
-      if(!progressData.completedDays) {
-        progressData.completedDays = [];
-      }
+      if(!progressData.completedDays) progressData.completedDays = [];
       progressData.completedDays.push(dayNum);
     }
     
@@ -328,14 +295,10 @@ async function submitTask(dayIndex, data) {
     showPopup(appreciationMessages[dayIndex]);
     
     if(dayNum % 7 === 0) {
-      setTimeout(() => {
-        checkWeeklyBonus(dayNum, progressData);
-      }, 2000);
+      setTimeout(() => checkWeeklyBonus(dayNum, progressData), 2000);
     }
     
   } catch (error) {
-    console.error('Upload failed:', error);
-    
     const reader = new FileReader();
     reader.onload = function(e) {
       let progressData = localDB.getItem("progress_saniya") || { proofs: [], points: 0, completedDays: [] };
@@ -348,10 +311,7 @@ async function submitTask(dayIndex, data) {
           public_id: `local_day_${dayNum}_${Date.now()}`
         });
         progressData.points = (progressData.points || 0) + 10;
-        
-        if(!progressData.completedDays) {
-          progressData.completedDays = [];
-        }
+        if(!progressData.completedDays) progressData.completedDays = [];
         progressData.completedDays.push(dayNum);
       }
       
@@ -364,28 +324,23 @@ async function submitTask(dayIndex, data) {
       markDoneBtn.textContent = "Mark as Done ✅";
       markDoneBtn.disabled = false;
       
-      showPopup(appreciationMessages[dayIndex] + "<br><br><small>Note: Image stored locally. Upload preset may need configuration for cloud storage.</small>");
+      showPopup(appreciationMessages[dayIndex] + "<br><br><small>Note: Image stored locally.</small>");
       
       if(dayNum % 7 === 0) {
-        setTimeout(() => {
-          checkWeeklyBonus(dayNum, progressData);
-        }, 2000);
+        setTimeout(() => checkWeeklyBonus(dayNum, progressData), 2000);
       }
     };
-    
     reader.readAsDataURL(file);
   }
 }
 
-// Check Weekly Bonus - Mark as bonus message
+// Check Weekly Bonus
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
   const weekEnd = week * 7;
   
-  const weekCompleted = data.proofs.filter(p => 
-    p.day >= weekStart && p.day <= weekEnd
-  ).length;
+  const weekCompleted = data.proofs.filter(p => p.day >= weekStart && p.day <= weekEnd).length;
   
   if(weekCompleted === 7) {
     const bonus = bonusMessages[week];
@@ -403,41 +358,25 @@ function checkWeeklyBonus(dayNum, data) {
   }
 }
 
-// Function to update progress data
+// Update progress
 function updateProgressData() {
   const data = localDB.getItem("progress_saniya");
-  if (data) {
-    updateCalendar(data);
-  }
+  if (data) updateCalendar(data);
 }
 
-// Initialize app on DOM ready
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
-  // Force hide loading
-  const loadingDiv = document.getElementById("loading");
-  if(loadingDiv) {
-    loadingDiv.style.display = 'none';
-  }
-  
-  // Initialize and render
   const data = initializeProgress();
   updateCalendar(data);
   
-  // Setup close button
   const closeBtn = document.getElementById("close-popup");
-  if(closeBtn) {
-    closeBtn.addEventListener("click", closePopup);
-  }
+  if(closeBtn) closeBtn.addEventListener("click", closePopup);
   
-  // Check if bonus popup should stay open
   const bonusPopupWasActive = localStorage.getItem('bonusPopupActive');
   if(bonusPopupWasActive !== 'true') {
     const popup = document.getElementById("popup");
-    if(popup) {
-      popup.classList.add("hidden");
-    }
+    if(popup) popup.classList.add("hidden");
   }
   
-  // Update progress periodically
   setInterval(updateProgressData, 5000);
 });
