@@ -120,6 +120,11 @@ const progressFill = document.getElementById("progress-fill");
 const progressText = document.getElementById("progress-text");
 const loadingDiv = document.getElementById("loading");
 
+// Hide loading immediately on script load
+if(loadingDiv) {
+  loadingDiv.style.display = 'none';
+}
+
 // Popup - Mark bonus messages with a persistent flag
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
@@ -155,7 +160,7 @@ function getCurrentDay() {
   return Math.min(daysPassed, 30);
 }
 
-// Initialize or load progress data - FIXED: Faster loading
+// Initialize or load progress data - FIXED: Instant loading
 function initializeProgress() {
   try {
     let data = localDB.getItem("progress_saniya");
@@ -175,13 +180,11 @@ function initializeProgress() {
       }
     }
     
-    // Immediately hide loading and update calendar (no delay)
-    loadingDiv.classList.add("hidden");
+    // Immediately update calendar (no loading screen)
     updateCalendar(data);
     
   } catch (error) {
     console.error("Error initializing progress:", error);
-    loadingDiv.classList.add("hidden");
     updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
 }
