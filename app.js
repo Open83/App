@@ -18,69 +18,69 @@ const localDB = {
 
 // --- 30-Day Habits ---
 const habits = [
-"Drink your banana shake 🍌 💧",
-    "Smile in the mirror for 1 minute 😊", 
-    "Listen to your favorite song 🎶",
-    "Write one thing you love about yourself ✍️",
-    "Take a 10 min walk/stretch 🚶‍♀️",
-    "Send me a heart emoji ❤️ on whatsApp",
-    "Send me Nudes 💖",
-    "Eat one healthy fruit 🍎",
-    "Compliment yourself loudly 🪞",
-    "Do 5 deep breaths 🌬️",
-    "Tarif karo meri 💖",
-    "Gaanaa sunaao 💃",
-    "Think about one happy memory of us and write a message💖",
-    "Send me your selfie 😊",
-    "Write down one dream/goal 🌟",
-    "Drink lemon water 🍋",
-    "Write down one thing you want to improve about me 💖",
-    "Share a song that reminds you of us 🎵💑",
-    "Write one thing you love about me 😏",
-    "Send a voice note saying something cute or funny 🎤😂",
-    "Make a small “memory list” of our happiest moments together 📝💖",
-    "Random “I love you” text days 💌",
-    "Drink warm milk/herbal tea 🥛🍵",
-    "Text me a random “I’m thinking of you” 💌",
-    "Make a best dish for me 😍",
-    "Close eyes & imagine me 💑",
-    "Write one word that describes 'us' 🥰",
-    "Do a funny dance and record a 5-second clip 💃😂",
-    "Send me a message on my sex performance💕",
-    "Think about our future together ✨"
+  "Drink your banana shake 🍌 💧",
+  "Smile in the mirror for 1 minute 😊", 
+  "Listen to your favorite song 🎶",
+  "Write one thing you love about yourself ✍️",
+  "Write a full beautiful message on our beautiful journey start to end 😊",
+  "Send me a heart emoji ❤️ on whatsApp",
+  "Send me Nudes 💖",
+  "Eat one healthy fruit 🍎",
+  "Make a small memory list of our happiest moments together 📝💖",
+  "Do 5 deep breaths 🌬️",
+  "Tarif karo meri 💖",
+  "Gaanaa sunaao 💃",
+  "Think about one happy memory of us and write a message💖",
+  "Send me your selfie 😊",
+  "Write down one dream/goal 🌟",
+  "Drink lemon water 🍋",
+  "Write down one thing you want to improve about me 💖",
+  "Share a song that reminds you of us 🎵💑",
+  "Write one thing you love about me 😏",
+  "Send a voice note saying something cute or funny 🎤😂",
+  "Send me a bathing video ❤️",
+  "Random I love you text days 💌",
+  "Drink warm milk/herbal tea 🥛🍵",
+  "Text me a random I'm thinking of you 💌",
+  "Make a best dish for me 😍",
+  "Close eyes & imagine me 💑",
+  "Write one word that describes us 🥰",
+  "Do a funny dance and record a 5-second clip 💃😂",
+  "Send me a message on my sex performance💕",
+  "Think about our future together ✨"
 ];
 
 // --- 30-Day Appreciation Messages ---
 const appreciationMessages = [
-"Day 1: Tum meri life ka woh start ho jahan se sab sense ban gaya ❤️‍🔥";
-"Day 2: Tumhari aankhon mein jo junoon hai… usme main khudko khona chahta hoon 👀🔥";
-"Day 3: Tumhari muskaan meri har darkness tod deti hai 🌙✨";
-"Day 4: Tum meri subah ka caffeine ☕ aur raat ka sukoon 🌌 ho";
-"Day 5: Tumhare lips… meri sabse badi weakness hain 💋❤️‍🔥";
-"Day 6: Tumhari curves ek dangerous poetry hain 📖🔥 jise main baar-baar padhna chahta hoon";
-"Day 7: Har fight ke baad tumhara gale lagna 🤗 meri duniya reset kar deta hai";
-"Day 8: Tum meri wild fantasy ho 🖤 jise main har din jeena chahta hoon";
-"Day 9: Tumhare saath time slow ho jaata hai ⏳ par desire infinite ho jaata hai ♾️🔥";
-"Day 10: Tum meri khamoshi bhi samajh jaati ho… bas yahi meri love language hai 🖤🌹";
-"Day 11: Tum meri rooh mein itni gehraayi tak utar chuki ho 🌊 ki ab alag karna namumkin hai";
-"Day 12: Tumhari ek adaa meri heartbeat dangerous bana deti hai 💓⚡";
-"Day 13: Tum meri jaan bhi ho ❤️ aur mera junoon bhi 🔥";
-"Day 14: Tum meri body ki craving 😈 aur dil ka sukoon 🕊️ ek saath ho";
-"Day 15: Har din ke saath mera pyaar tumhare liye aur raw ho jaata hai ❤️‍🔥";
-"Day 16: Tumhari touch meri skin ko fire bana deti hai 🔥🤲";
-"Day 17: Tum rarest beauty ho 🌹 meri sabse khoobsurat weakness";
-"Day 18: Tum meri fantasy ki har detail ko reality bana deti ho 🖤💭";
-"Day 19: Tum meri life ki brightest star ✨ aur meri sabse badi addiction ho 🔥";
-"Day 20: Tum meri calmness bhi ho 🌊 aur mera wild storm bhi 🌪️";
-"Day 21: Har hafte ke baad tumhari zaroorat aur gehri ho jaati hai 🤍🔥";
-"Day 22: Tumhari aankhon ki bhook 👀 mujhe tumhara bana leti hai";
-"Day 23: Tum meri prayers ka sabse khoobsurat jawab ho 🤲❤️";
-"Day 24: Tum meri sabse deep desire ho ❤️‍🔥 jise main kabhi khona nahi chahta";
-"Day 25: Tum meri life ka woh chapter ho 📖 jahan sab raw aur real hai";
-"Day 26: Tum meri craving 😈 meri addiction 🖤 aur meri fantasy ho 🌹";
-"Day 27: Tum meri har heartbeat mein likha hua ek junoon ho 💓🔥";
-"Day 28: Tum meri rooh aur meri body dono ki bhook ho ❤️‍🔥🤲";
-"Day 29: Tum meri incomplete story ka woh last page ho 📖✨ jo sab perfect bana deta hai";
+"Day 1: Tum meri life ka woh start ho jahan se sab sense ban gaya ❤️‍🔥",
+"Day 2: Tumhari aankhon mein jo junoon hai… usme main khudko khona chahta hoon 👀🔥",
+"Day 3: Tumhari muskaan meri har darkness tod deti hai 🌙✨",
+"Day 4: Tum meri subah ka caffeine ☕ aur raat ka sukoon 🌌 ho",
+"Day 5: Tumhare lips… meri sabse badi weakness hain 💋❤️‍🔥",
+"Day 6: Tumhari curves ek dangerous poetry hain 📖🔥 jise main baar-baar padhna chahta hoon",
+"Day 7: Har fight ke baad tumhara gale lagna 🤗 meri duniya reset kar deta hai",
+"Day 8: Tum meri wild fantasy ho 🖤 jise main har din jeena chahta hoon",
+"Day 9: Tumhare saath time slow ho jaata hai ⏳ par desire infinite ho jaata hai ♾️🔥",
+"Day 10: Tum meri khamoshi bhi samajh jaati ho… bas yahi meri love language hai 🖤🌹",
+"Day 11: Tum meri rooh mein itni gehraayi tak utar chuki ho 🌊 ki ab alag karna namumkin hai",
+"Day 12: Tumhari ek adaa meri heartbeat dangerous bana deti hai 💓⚡",
+"Day 13: Tum meri jaan bhi ho ❤️ aur mera junoon bhi 🔥",
+"Day 14: Tum meri body ki craving 😈 aur dil ka sukoon 🕊️ ek saath ho",
+"Day 15: Har din ke saath mera pyaar tumhare liye aur raw ho jaata hai ❤️‍🔥",
+"Day 16: Tumhari touch meri skin ko fire bana deti hai 🔥🤲",
+"Day 17: Tum rarest beauty ho 🌹 meri sabse khoobsurat weakness",
+"Day 18: Tum meri fantasy ki har detail ko reality bana deti ho 🖤💭",
+"Day 19: Tum meri life ki brightest star ✨ aur meri sabse badi addiction ho 🔥",
+"Day 20: Tum meri calmness bhi ho 🌊 aur mera wild storm bhi 🌪️",
+"Day 21: Har hafte ke baad tumhari zaroorat aur gehri ho jaati hai 🤍🔥",
+"Day 22: Tumhari aankhon ki bhook 👀 mujhe tumhara bana leti hai",
+"Day 23: Tum meri prayers ka sabse khoobsurat jawab ho 🤲❤️",
+"Day 24: Tum meri sabse deep desire ho ❤️‍🔥 jise main kabhi khona nahi chahta",
+"Day 25: Tum meri life ka woh chapter ho 📖 jahan sab raw aur real hai",
+"Day 26: Tum meri craving 😈 meri addiction 🖤 aur meri fantasy ho 🌹",
+"Day 27: Tum meri har heartbeat mein likha hua ek junoon ho 💓🔥",
+"Day 28: Tum meri rooh aur meri body dono ki bhook ho ❤️‍🔥🤲",
+"Day 29: Tum meri incomplete story ka woh last page ho 📖✨ jo sab perfect bana deta hai",
 "Day 30: Tum meri forever queen 👑 meri wild passion 🔥 aur meri destiny ho ❤️"
 ];
 
