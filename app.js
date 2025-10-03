@@ -120,7 +120,10 @@ const progressFill = document.getElementById("progress-fill");
 const progressText = document.getElementById("progress-text");
 const loadingDiv = document.getElementById("loading");
 
-// Popup - CHANGED: Use localStorage instead of sessionStorage
+// Don't show loading screen - render immediately
+loadingDiv.classList.add("hidden");
+
+// Popup - ONLY CHANGE: Added isBonusMessage parameter
 function showPopup(content, isBonusMessage = false){
   const popup = document.getElementById("popup");
   const popupContent = document.getElementById("popup-content");
@@ -128,16 +131,16 @@ function showPopup(content, isBonusMessage = false){
   popup.classList.remove("hidden");
   popupContent.classList.add("fade-in");
   
-  // CHANGED: Use localStorage for persistence across refresh
+  // If it's a bonus message, set a flag in sessionStorage
   if(isBonusMessage) {
-    localStorage.setItem('bonusPopupOpen', 'true');
+    sessionStorage.setItem('bonusPopupOpen', 'true');
   }
 }
 
-// CHANGED: Clear bonus popup flag when closed
+// ONLY CHANGE: Clear bonus popup flag when closed
 document.getElementById("close-popup").addEventListener("click", ()=>{
   document.getElementById("popup").classList.add("hidden");
-  localStorage.removeItem('bonusPopupOpen');
+  sessionStorage.removeItem('bonusPopupOpen');
 });
 
 // Calculate current day based on start time
@@ -158,36 +161,27 @@ function getCurrentDay() {
 
 // Initialize or load progress data
 function initializeProgress() {
-  try {
-    let data = localDB.getItem("progress_saniya");
-    
-    if (!data) {
-      // First time - create initial data
-      data = { 
-        proofs: [], 
-        points: 0,
-        startTime: new Date().getTime(),
-        completedDays: []
-      };
-      localDB.setItem("progress_saniya", data);
-      // Set start time in localStorage
+  let data = localDB.getItem("progress_saniya");
+  
+  if (!data) {
+    // First time - create initial data
+    data = { 
+      proofs: [], 
+      points: 0,
+      startTime: new Date().getTime(),
+      completedDays: []
+    };
+    localDB.setItem("progress_saniya", data);
+    localStorage.setItem('habitStartTime', data.startTime.toString());
+  } else {
+    // Sync localStorage with stored start time
+    if (data.startTime) {
       localStorage.setItem('habitStartTime', data.startTime.toString());
-    } else {
-      // Sync localStorage with stored start time
-      if (data.startTime) {
-        localStorage.setItem('habitStartTime', data.startTime.toString());
-      }
     }
-    
-    // CHANGED: Remove loading immediately
-    loadingDiv.classList.add("hidden");
-    updateCalendar(data);
-  } catch (error) {
-    console.error("Error initializing progress:", error);
-    loadingDiv.classList.add("hidden");
-    // Fallback to empty data
-    updateCalendar({ proofs: [], points: 0, completedDays: [] });
   }
+  
+  // Render calendar immediately without delay
+  updateCalendar(data);
 }
 
 // Function to update progress data
@@ -400,7 +394,7 @@ async function submitTask(dayIndex, data) {
   }
 }
 
-// Check Weekly Bonus - CHANGED: Pass true for bonus messages
+// Check Weekly Bonus - ONLY CHANGE: Pass true for bonus messages
 function checkWeeklyBonus(dayNum, data) {
   const week = Math.floor((dayNum - 1) / 7) + 1;
   const weekStart = (week - 1) * 7 + 1;
@@ -427,12 +421,13 @@ function checkWeeklyBonus(dayNum, data) {
   }
 }
 
-// Initialize app - CHANGED: Don't auto-close bonus popup
+// Initialize app - ONLY CHANGE: Auto-close bonus popup on refresh
 document.addEventListener('DOMContentLoaded', () => {
-  // CHANGED: Check if bonus popup should stay open (don't auto-close on refresh)
-  const bonusPopupWasOpen = localStorage.getItem('bonusPopupOpen');
-  if(bonusPopupWasOpen !== 'true') {
+  // Close bonus popup on page load (after refresh)
+  const bonusPopupWasOpen = sessionStorage.getItem('bonusPopupOpen');
+  if(bonusPopupWasOpen === 'true') {
     document.getElementById("popup").classList.add("hidden");
+    sessionStorage.removeItem('bonusPopupOpen');
   }
   
   initializeProgress();
